@@ -1400,6 +1400,9 @@ def main(argv):
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
 
+  if "ota_override_device" in OPTIONS.info_dict:
+    OPTIONS.override_device = OPTIONS.info_dict.get("ota_override_device")
+
   # Assume retrofitting dynamic partitions when base build does not set
   # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
