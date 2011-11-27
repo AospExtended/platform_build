@@ -639,6 +639,17 @@ function lunch()
     build_build_var_cache
     if [ $? -ne 0 ]
     then
+        # if we can't find a product, try to grab it off the AEX github
+        T=$(gettop)
+        pushd $T > /dev/null
+        build/tools/roomservice.py $product
+        popd > /dev/null
+        check_product $product
+    else
+        build/tools/roomservice.py $product true
+    fi
+    if [ $? -ne 0 ]
+    then
         return 1
     fi
 
