@@ -20,8 +20,7 @@
 # entirely appropriate to inherit from for on-device configurations.
 
 PRODUCT_PROPERTY_OVERRIDES := \
-    keyguard.no_require_sim=true \
-    ro.com.android.dataroaming=true
+    keyguard.no_require_sim=true
 
 ifeq ($(CUSTOM_BUILD),)
 PRODUCT_COPY_FILES += \
