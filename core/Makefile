@@ -3825,6 +3825,12 @@ ifdef BUILDING_USERDATA_IMAGE
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_DATA),$(zip_root)/DATA)
 endif
+ifdef BOARD_CUSTOM_BOOTIMG
+	@# Prebuilt boot images
+	$(hide) mkdir -p $(zip_root)/BOOTABLE_IMAGES
+	$(hide) $(ACP) $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/BOOTABLE_IMAGES/
+	$(hide) $(ACP) $(INSTALLED_RECOVERYIMAGE_TARGET) $(zip_root)/BOOTABLE_IMAGES/
+endif
 ifdef BUILDING_VENDOR_IMAGE
 	@# Contents of the vendor image
 	$(hide) $(call package_files-copy-root, \
