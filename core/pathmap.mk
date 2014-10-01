@@ -40,7 +40,7 @@ pathmap_INCL := \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
     libril:hardware/ril/include \
-    recovery:bootable/recovery \
+    opengl-tests-includes:frameworks/native/opengl/tests/include \
     system-core:system/core/include \
     audio:system/media/audio/include \
     audio-effects:system/media/audio_effects/include \
