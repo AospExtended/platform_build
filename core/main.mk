@@ -437,7 +437,7 @@ endif # !enable_target_debugging
 ## eng ##
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
-tags_to_install := debug eng
+tags_to_install := eng
 WITH_DEXPREOPT := false
 ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))),)
   # Don't require the setup wizard on eng builds
@@ -465,7 +465,7 @@ endif
 
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
-tags_to_install := debug eng
+tags_to_install := eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
