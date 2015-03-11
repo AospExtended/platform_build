@@ -4,7 +4,7 @@
 
 # Setting LOCAL_DEX_PREOPT based on WITH_DEXPREOPT, LOCAL_DEX_PREOPT, etc
 LOCAL_DEX_PREOPT := $(strip $(LOCAL_DEX_PREOPT))
-ifneq (true,$(WITH_DEXPREOPT))
+ifneq (very_true,$(WITH_DEXPREOPT))
   LOCAL_DEX_PREOPT :=
 else # WITH_DEXPREOPT=true
   ifeq (,$(TARGET_BUILD_APPS)) # TARGET_BUILD_APPS empty
