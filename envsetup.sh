@@ -2013,8 +2013,8 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
     esac
 fi
 
-# Execute the contents of any vendorsetup.sh files we can find.
-for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
+# Execute the contents of any vendorsetup.sh files we can find (exluding generic vendorsetups).
+for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' ! -path '*/generic/*' 2> /dev/null | sort` \
          `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
 do
     echo "including $f"
