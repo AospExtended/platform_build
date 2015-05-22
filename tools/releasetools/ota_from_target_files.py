@@ -709,8 +709,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
   else:
-    script.FormatPartition("/system")
-    script.Mount("/system", recovery_mount_options)
+    script.AppendExtra("run_program(\"/tmp/install/bin/format.sh\");")
+    script.Mount("/system")
     if not has_recovery_patch:
       script.UnpackPackageDir("recovery", "/system")
     script.UnpackPackageDir("system", "/system")
