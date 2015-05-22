@@ -468,6 +468,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # Dump fingerprints
   script.Print("Target: %s" % target_fp)
 
+  script.Print("      _____  ___________")
+  script.Print("  __ / / _ \/ ___/_  __/__ ___ ___ _  ")
+  script.Print(" / // / // / /__  / / / -_) _ `/  ' \ ")
+  script.Print(" \___/____/\___/ /_/  \__/\_,_/_/_/_/ ")
+  script.Print(" ")
+  script.Print("The Android Open Source Project 6.0")
+  script.Print(" ")
+  script.AppendExtra("sleep (2);")
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
 
