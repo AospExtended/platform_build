@@ -232,12 +232,8 @@ class EdifyGenerator(object):
           if "=" in option:
             key, value = option.split("=", 1)
             mount_dict[key] = value
-      mount_flags = mount_dict.get(p.fs_type, "")
-      if p.context is not None:
-        mount_flags = p.context + ("," + mount_flags if mount_flags else "")
-      self.script.append('mount("%s", "%s", "%s", "%s", "%s");' % (
-          p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device,
-          p.mount_point, mount_flags))
+      self.script.append('run_program("/sbin/busybox", "mount", "%s");' %
+                         (p.mount_point))
       self.mounts.add(p.mount_point)
 
   def Unmount(self, mount_point):
