@@ -22,5 +22,3 @@ PRODUCT_PACKAGES := \
     Dialer \
     CallLogBackup \
     rild
-
-PRODUCT_COPY_FILES := \
