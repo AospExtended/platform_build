@@ -24,5 +24,3 @@ PRODUCT_PACKAGES := \
     CellBroadcastReceiver \
     EmergencyInfo \
     rild
-
-PRODUCT_COPY_FILES := \
