@@ -30,6 +30,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
 - refreshmod: Refresh list of modules for allmod/gomod.
+- mka:       Builds using SCHED_BATCH on all processors
+- reposync:  Parallel repo sync using ionice and SCHED_BATCH
 
 EOF
 
@@ -1434,6 +1436,28 @@ function gomod() {
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $(allmod | grep -E "^$word") )
+}
+
+function mka() {
+    case `uname -s` in
+        Darwin)
+            make -j `sysctl hw.ncpu|cut -d" " -f2` "$@"
+            ;;
+        *)
+            schedtool -B -n 1 -e ionice -n 1 make -j$(cat /proc/cpuinfo | grep "^processor" | wc -l) "$@"
+            ;;
+    esac
+}
+
+function reposync() {
+    case `uname -s` in
+        Darwin)
+            repo sync -j 4 "$@"
+            ;;
+        *)
+            schedtool -B -n 1 -e ionice -n 1 `which repo` sync -j 4 "$@"
+            ;;
+    esac
 }
 
 # Print colored exit condition
