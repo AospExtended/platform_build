@@ -1311,14 +1311,16 @@ class BlockDifference(object):
       script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
                          self.device, ranges_str,
                          self._HashZeroBlocks(self.tgt.extended.size())))
-      script.Print('Verified the updated %s image.' % (partition,))
+      script.Print(" ")
+      script.Print("AOSP System files verified.")
       script.AppendExtra(
           'else\n'
           '  abort("%s partition has unexpected non-zero contents after OTA '
           'update");\n'
           'endif;' % (partition,))
     else:
-      script.Print('Verified the updated %s image.' % (partition,))
+      script.Print(" ")
+      script.Print("AOSP System files verified.")
 
     script.AppendExtra(
         'else\n'
