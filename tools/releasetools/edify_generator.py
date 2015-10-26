@@ -223,7 +223,7 @@ class EdifyGenerator(object):
       where option is optname[=optvalue]
       E.g. ext4=barrier=1,nodelalloc,errors=panic|f2fs=errors=recover
     """
-    fstab = self.fstab
+    fstab = self.info.get("fstab", None)
     if fstab:
       p = fstab[mount_point]
       mount_dict = {}
