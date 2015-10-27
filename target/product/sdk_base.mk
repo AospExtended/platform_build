@@ -60,7 +60,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
-	device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
 	device/sample/etc/old-apns-conf.xml:system/etc/old-apns-conf.xml \
 	device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
