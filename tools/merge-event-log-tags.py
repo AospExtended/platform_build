@@ -35,6 +35,11 @@ import sys
 
 import event_log_tags
 
+def iteritems(obj):
+  if hasattr(obj, 'iteritems'):
+    return obj.iteritems()
+  return obj.items()
+
 errors = []
 warnings = []
 
