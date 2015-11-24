@@ -130,7 +130,7 @@ $(built_dex): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
 $(built_dex): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK_JAR) $(JACK_LAUNCHER_JAR)
-	@echo Building with Jack: $@
+	@echo ${CL_GRN} Building with Jack:${CL_RST} $@
 	$(jack-java-to-dex)
 
 # $(full_classes_jack) is just by-product of $(built_dex).
