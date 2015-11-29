@@ -633,14 +633,14 @@ jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) 
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(full_classes_jack): $(jack_all_deps)
-	@echo ${CL_GRN} Building with Jack:${CL_RST} $@
+	@echo -e ${CL_GRN}Building with Jack:${CL_RST} $@
 	$(java-to-jack)
 
 else #LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
 
 $(built_dex_intermediate): $(jack_all_deps)
-	@echo ${CL_GRN} Building with Jack:${CL_RST} $@
+	@echo -e ${CL_GRN}Building with Jack:${CL_RST} $@
 	$(jack-java-to-dex)
 
 # $(full_classes_jack) is just by-product of $(built_dex_intermediate).
@@ -659,7 +659,7 @@ $(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
 endif
 $(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
 $(noshrob_classes_jack): $(jack_all_deps)
-	@echo ${CL_GRN} Building with Jack:${CL_RST} $@
+	@echo -e ${CL_GRN}Building with Jack:${CL_RST} $@
 	$(java-to-jack)
 endif  # full_classes_jar is defined
 endif # LOCAL_JACK_ENABLED
