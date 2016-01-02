@@ -1237,6 +1237,13 @@ class DeviceSpecificParams(object):
     assertions they like."""
     return self._DoCall("FullOTA_Assertions")
 
+  def FullOTA_CustomAsserts(self):
+    """Called after the system is unpackaged. This is needed for unified 
+    device tree, allow us to move the device-specific proprietary files
+    and let the installation script set correcty permissions and selinux 
+    context fot that files"""
+    return self._DoCall("FullOTA_CustomAsserts")
+
   def FullOTA_InstallBegin(self):
     """Called at the start of full OTA installation."""
     return self._DoCall("FullOTA_InstallBegin")
