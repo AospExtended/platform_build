@@ -722,6 +722,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
       script.UnpackPackageDir("recovery", "/system")
     script.UnpackPackageDir("system", "/system")
 
+    device_specific.FullOTA_CustomAsserts()
+
     symlinks = CopyPartitionFiles(system_items, input_zip, output_zip)
     script.Print("Making symlinks...");
     script.MakeSymlinks(symlinks)
