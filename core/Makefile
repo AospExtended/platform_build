@@ -2136,26 +2136,28 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-SLIM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(SLIM_MOD_VERSION).zip
+TARGET_PACKAGE := $(PRODUCT_OUT)/AOSP-RRO$(PLATFORM_VERSION)-$(shell date +%Y%m%d)-$(TARGET_DEVICE)-$(USER).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(SLIM_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(SLIM_TARGET_PACKAGE) > $(SLIM_TARGET_PACKAGE).md5sum
-	@echo -e ${CL_SLIM}" "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                              _______________________________________________  "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                             /                                  slimroms.org | "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                            /   _____________________________________________| "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                           /   /                                               "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                          /   /  _  _      "${CL_SGRY}" ______                             "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                         /   /  | |(_)     "${CL_SGRY}"(_____ \                            "${CL_SLIM}
-	@echo -e ${CL_SLIM}"                        /   /   | | _ _____ "${CL_SGRY}"_____) )___  _____  ___            "${CL_SLIM}
-	@echo -e ${CL_SLIM}"  _____________________/   /    | || |     |"${CL_SGRY}"  __  // _ \|     |/___)           "${CL_SLIM}
-	@echo -e ${CL_SLIM}" |                        /     | || | | | |"${CL_SGRY}" |  \ \ |_| | | | |___ |           "${CL_SLIM}
-	@echo -e ${CL_SLIM}" |_______________________/       \_)_|_|_|_|"${CL_SGRY}"_|   |_\___/|_|_|_(___/            "${CL_SLIM}
-	@echo -e ${CL_SLIM}" "${CL_SLIM}
-	@echo -e ${CL_CYN}"Package Complete: $(SLIM_TARGET_PACKAGE)"${CL_RST}
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_PACKAGE)
+	$(hide) $(MD5SUM) $(TARGET_PACKAGE) > $(TARGET_PACKAGE).md5sum
+	@echo -e ${CL_BLD}${CL_CYN}"===============================-Package complete-==============================="${CL_RST}
+	@echo -e ${CL_BLD}${CL_YLW}"Zip: "${CL_YLW} $(TARGET_PACKAGE)${CL_RST}
+	@echo -e ${CL_BLD}${CL_YLW}"MD5: "${CL_YLW}" `cat $(TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
+ifeq ($(HOST_OS),darwin)
+	@echo -e ${CL_BLD}${CL_YLW}"Size:"${CL_YLW}" `ls -lah $(TARGET_PACKAGE) | cut -d ' ' -f 9`"${CL_RST}
+else
+	@echo -e ${CL_BLD}${CL_YLW}"Size:"${CL_YLW}" `ls -lah $(TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
+endif
+	@echo -e ${CL_BLD}${CL_CYN}"================================================================================"${CL_RST}
+
+ bootzip: bootimage
+ 	$(BOOT_ZIP_FROM_IMAGE_SCRIPT) \
+ 	   $(recovery_fstab) \
+ 	   $(OUT) \
+$(TARGET_DEVICE)
 
 endif    # build_ota_package
 # -----------------------------------------------------------------
