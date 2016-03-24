@@ -78,14 +78,6 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^slim_") ; then
-       SLIM_BUILD=$(echo -n $1 | sed -e 's/^slim_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $SLIM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
-    else
-       SLIM_BUILD=
-    fi
-    export SLIM_BUILD
-
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
@@ -723,8 +715,8 @@ function tapas()
 function eat()
 {
     if [ "$OUT" ] ; then
-        MODVERSION=$(get_build_var SLIM_VERSION)
-        ZIPFILE=$MODVERSION.zip
+	MODVERSION=`sed -n -e'/ro\.cm\.version/s/.*=//p' $OUT/system/build.prop`
+        ZIPFILE=cm-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
@@ -2079,15 +2071,13 @@ unset f
 
 # Add completions
 check_bash_version && {
-    dirs="sdk/bash_completion vendor/slim/bash_completion"
-    for dir in $dirs; do
+    dirs="sdk/bash_completion"
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
             echo "including $f"
             . $f
         done
     fi
-    done
 }
 
 export ANDROID_BUILD_TOP=$(gettop)
