@@ -681,21 +681,6 @@ function lunch()
     check_product $product
     if [ $? -ne 0 ]
     then
-        # if we can't find a product, try to grab it off the SLIM github
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/tools/roomservice.py $product
-        popd > /dev/null
-        check_product $product
-    else
-        build/tools/roomservice.py $product true
-    fi
-    TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
-    build_build_var_cache
-
-    if [ $? -ne 0 ]
-    then
         echo
         echo "** Don't have a product spec for: '$product'"
         echo "** Do you have the right repo manifest?"
@@ -1760,6 +1745,104 @@ function godir () {
     \cd $T/$pathname
 }
 
+<<<<<<< HEAD
+=======
+function makerecipe() {
+  if [ -z "$1" ]
+  then
+    echo "No branch name provided."
+    return 1
+  fi
+  cd android
+  sed -i s/'default revision=.*'/'default revision="refs\/heads\/'$1'"'/ default.xml
+  git commit -a -m "$1"
+  cd ..
+
+  repo forall -c '
+
+  if [ "$REPO_REMOTE" == "github" ]
+  then
+    pwd
+    cmremote
+    git push cmremote HEAD:refs/heads/'$1'
+  fi
+  '
+}
+
+function mka() {
+    local T=$(gettop)
+    if [ "$T" ]; then
+        case `uname -s` in
+            Darwin)
+                make -C $T -j `sysctl hw.ncpu|cut -d" " -f2` "$@"
+                ;;
+            *)
+                mk_timer schedtool -B -n 1 -e ionice -n 1 make -C $T -j$(cat /proc/cpuinfo | grep "^processor" | wc -l) "$@"
+                ;;
+        esac
+
+    else
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+    fi
+}
+
+function cmka() {
+    if [ ! -z "$1" ]; then
+        for i in "$@"; do
+            case $i in
+                bacon|otapackage|systemimage)
+                    mka installclean
+                    mka $i
+                    ;;
+                *)
+                    mka clean-$i
+                    mka $i
+                    ;;
+            esac
+        done
+    else
+        mka clean
+        mka
+    fi
+}
+
+function repolastsync() {
+    RLSPATH="$ANDROID_BUILD_TOP/.repo/.repo_fetchtimes.json"
+    RLSLOCAL=$(date -d "$(stat -c %z $RLSPATH)" +"%e %b %Y, %T %Z")
+    RLSUTC=$(date -d "$(stat -c %z $RLSPATH)" -u +"%e %b %Y, %T %Z")
+    echo "Last repo sync: $RLSLOCAL / $RLSUTC"
+}
+
+function reposync() {
+    case `uname -s` in
+        Darwin)
+            repo sync -j 4 "$@"
+            ;;
+        *)
+            schedtool -B -n 1 -e ionice -n 1 `which repo` sync -j 4 "$@"
+            ;;
+    esac
+}
+
+function fixup_common_out_dir() {
+    common_out_dir=$(get_build_var OUT_DIR)/target/common
+    target_device=$(get_build_var TARGET_DEVICE)
+    if [ ! -z $SLIM_FIXUP_COMMON_OUT ]; then
+        if [ -d ${common_out_dir} ] && [ ! -L ${common_out_dir} ]; then
+            mv ${common_out_dir} ${common_out_dir}-${target_device}
+            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
+        else
+            [ -L ${common_out_dir} ] && rm ${common_out_dir}
+            mkdir -p ${common_out_dir}-${target_device}
+            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
+        fi
+    else
+        [ -L ${common_out_dir} ] && rm ${common_out_dir}
+        mkdir -p ${common_out_dir}
+    fi
+}
+
+>>>>>>> 2add70e... Remove repopick and roomservice.py
 function installboot()
 {
     if [ ! -e "$OUT/recovery/root/etc/recovery.fstab" ];
