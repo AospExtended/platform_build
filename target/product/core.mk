@@ -39,7 +39,7 @@ PRODUCT_PACKAGES += \
     InputDevices \
     KeyChain \
     Keyguard \
-    Launcher2 \
+    Launcher3 \
     ManagedProvisioning \
     PicoTts \
     PacProcessor \
