@@ -628,17 +628,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Unmount("/system")
 
   system_progress = 0.75
-  
-script.Print("");
-script.Print("  ________  ________  ________  ________   ");
-script.Print(" |\   __  \|\   __  \|\   ____\|\   __  \  ");
-script.Print(" \ \  \|\  \ \  \|\  \ \  \___|\ \  \|\  \ ");
-script.Print("  \ \   __  \ \  \\\  \ \_____  \ \   ____\");
-script.Print("   \ \  \ \  \ \  \\\  \|____|\  \ \  \___|");
-script.Print("    \ \__\ \__\ \_______\____\_\  \ \__\   ");
-script.Print("     \|__|\|__|\|_______|\_________\|__|   ");
-script.Print("                        \|_________|       ");
-script.Print("");
 
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
