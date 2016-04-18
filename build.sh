@@ -11,3 +11,4 @@ DEVICE="$1"
 lunch aosp_$DEVICE-userdebug
 export KBUILD_BUILD_HOST="android-build-system"
 mka bacon
+fi
