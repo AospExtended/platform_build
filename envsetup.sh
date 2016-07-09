@@ -125,6 +125,15 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
+
+    if (echo -n $1 | grep -q -e "^aosp_") ; then
+       AOSP_BUILD=$(echo -n $1 | sed -e 's/^aosp_//g')
+       export BUILD_NUMBER=$((date +%s%N ; echo $AOSP_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+    else
+       AOSP_BUILD=
+    fi
+    export AOSP_BUILD
+
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
