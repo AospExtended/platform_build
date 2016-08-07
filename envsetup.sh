@@ -482,14 +482,6 @@ function add_lunch_combo()
     LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
 }
 
-# add the default one here
-add_lunch_combo aosp_arm-eng
-add_lunch_combo aosp_arm64-eng
-add_lunch_combo aosp_mips-eng
-add_lunch_combo aosp_mips64-eng
-add_lunch_combo aosp_x86-eng
-add_lunch_combo aosp_x86_64-eng
-
 function print_lunch_menu()
 {
     local uname=$(uname)
@@ -2021,8 +2013,8 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
     esac
 fi
 
-# Execute the contents of any vendorsetup.sh files we can find.
-for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
+# Execute the contents of any vendorsetup.sh files we can find (exluding generic vendorsetups).
+for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' ! -path '*/generic/*' 2> /dev/null | sort` \
          `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
 do
     echo "including $f"
