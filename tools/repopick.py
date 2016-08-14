@@ -295,7 +295,7 @@ for changeps in args.change_number:
 
     # Extract information from the JSON response
     date_fluff       = '.000000000'
-    project_name     = data['project']
+    project_name     = data['project'].split('/')[1]
     project_branch   = data['branch']
     change_number    = data['_number']
     status           = data['status']
