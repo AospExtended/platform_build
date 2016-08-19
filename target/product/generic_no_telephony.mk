@@ -24,6 +24,7 @@ PRODUCT_PACKAGES := \
     Gallery2 \
     Exchange2 \
     MusicFX \
+    Music \
     OneTimeInitializer \
     Provision \
     SystemUI \
