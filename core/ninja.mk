@@ -121,7 +121,7 @@ ifneq (,$(filter showcommands,$(ORIGINAL_MAKECMDGOALS)))
 NINJA_ARGS += "-v"
 endif
 
-ifdef USE_GOMA
+ifneq ($(filter-out false,$(USE_GOMA)),)
 KATI_MAKEPARALLEL := $(MAKEPARALLEL)
 # Ninja runs remote jobs (i.e., commands which contain gomacc) with
 # this parallelism. Note the parallelism of all other jobs is still
