@@ -395,7 +395,7 @@ tags_to_install :=
 ifneq (,$(user_variant))
   # Target is not secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
-  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
+  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=0
 
   ifeq ($(user_variant),user)
     ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
@@ -429,7 +429,7 @@ ifeq (true,$(strip $(enable_target_debugging)))
   # Include the debugging/testing OTA keys in this build.
   INCLUDE_TEST_OTA_KEYS := true
 else # !enable_target_debugging
-  # Target debuggable and adbd is on by default
+  # Target is less debuggable and adbd is off by default
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
 endif # !enable_target_debugging
 
