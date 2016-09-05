@@ -2006,7 +2006,7 @@ def main(argv):
     elif o in ("--no_fallback_to_full",):
       OPTIONS.fallback_to_full = False
     elif o in ("--backup"):
-      OPTIONS.backuptool = bool(a.lower() == 'true')
+      OPTIONS.backuptool = True
     elif o == "--stash_threshold":
       try:
         OPTIONS.stash_threshold = float(a)
@@ -2018,11 +2018,11 @@ def main(argv):
     elif o == "--log_diff":
       OPTIONS.log_diff = a
     elif o in ("--backup"):
-      OPTIONS.backuptool = bool(a.lower() == 'true')
+      OPTIONS.backuptool = True
     elif o in ("--override_device"):
       OPTIONS.override_device = a
     elif o in ("--override_prop"):
-      OPTIONS.override_prop = bool(a.lower() == 'true')
+      OPTIONS.override_prop = True
     else:
       return False
     return True

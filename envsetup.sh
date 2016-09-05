@@ -127,13 +127,12 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^aosp_") ; then
-       AOSP_BUILD=$(echo -n $1 | sed -e 's/^aosp_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $AOSP_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+    if (echo -n $1 | grep -q -e "^jdc_") ; then
+       CUSTOM_BUILD=$(echo -n $1 | sed -e 's/^jdc_//g')
     else
-       AOSP_BUILD=
+       CUSTOM_BUILD=
     fi
-    export AOSP_BUILD
+    export CUSTOM_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
