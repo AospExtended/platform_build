@@ -2048,9 +2048,13 @@ ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
 
-TODAY := $(shell date -u +%Y%m%d)
-NAME := AOSP-7.0-$(TODAY)-$(TARGET_DEVICE)
-INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(NAME).zip
+name := $(TARGET_PRODUCT)
+ifeq ($(TARGET_BUILD_TYPE),debug)
+  name := $(name)_debug
+endif
+name := $(name)-ota-$(FILE_NAME_TAG)
+
+INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
