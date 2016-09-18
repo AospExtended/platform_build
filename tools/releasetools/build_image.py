@@ -61,7 +61,7 @@ def GetVerityFECSize(partition_size):
   cmd = "fec -s %d" % partition_size
   status, output = commands.getstatusoutput(cmd)
   if status:
-    print output
+    print(output)
     return False, 0
   return True, int(output)
 
@@ -149,7 +149,7 @@ AdjustPartitionSizeForVerity.results = {}
 
 def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path):
   cmd = "fec -e %s %s %s" % (sparse_image_path, verity_path, verity_fec_path)
-  print cmd
+  print(cmd)
   status, output = commands.getstatusoutput(cmd)
   if status:
     print "Could not build FEC data! Error: %s" % output
