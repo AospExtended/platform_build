@@ -659,6 +659,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.UnpackPackageDir("install", "/tmp/install")
   script.SetPermissionsRecursive("/tmp/install", 0, 0, 0o755, 0o644, None, None)
   script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0o755, 0o755, None, None)
+  script.SetPermissionsRecursive("/tmp/install/etc", 0, 0, 0o755, 0o755, None, None)
 
   if OPTIONS.backuptool:
     script.Mount("/system")
