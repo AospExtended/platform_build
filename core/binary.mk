@@ -556,22 +556,28 @@ my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBA
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
-ifeq ($(my_sdclang),true)
-    ifeq ($(strip $(my_cc)),)
-        my_cc := $(SDCLANG_PATH)/clang
+    ifeq ($(my_sdclang),true)
+        SDCLANG_PRECONFIGURED_FLAGS := -Wno-vectorizer-no-neon
+
+        my_target_global_cflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
+        my_target_global_conlyflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
+        my_target_global_cppflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
+
+        ifeq ($(strip $(my_cc)),)
+            my_cc := $(SDCLANG_PATH)/clang
+        endif
+        ifeq ($(strip $(my_cxx)),)
+            my_cxx := $(SDCLANG_PATH)/clang++
+        endif
     endif
-    ifeq ($(strip $(my_cxx)),)
-        my_cxx := $(SDCLANG_PATH)/clang++
+    ifeq ($(my_sdclang_2),true)
+        ifeq ($(strip $(my_cc)),)
+            my_cc := $(SDCLANG_PATH_2)/clang
+        endif
+        ifeq ($(strip $(my_cxx)),)
+            my_cxx := $(SDCLANG_PATH_2)/clang++
+        endif
     endif
-endif
-ifeq ($(my_sdclang_2),true)
-    ifeq ($(strip $(my_cc)),)
-        my_cc := $(SDCLANG_PATH_2)/clang
-    endif
-    ifeq ($(strip $(my_cxx)),)
-        my_cxx := $(SDCLANG_PATH_2)/clang++
-    endif
-endif
 else
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
