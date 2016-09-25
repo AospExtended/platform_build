@@ -2149,12 +2149,6 @@ bacon: otapackage
 	@echo -e ${CL_BLD}${CL_CYN}"================================================================================"${CL_RST}
 aosprro: bacon
 
- bootzip: bootimage
- 	$(BOOT_ZIP_FROM_IMAGE_SCRIPT) \
- 	   $(recovery_fstab) \
- 	   $(OUT) \
-$(TARGET_DEVICE)
-
 endif    # build_ota_package
 # -----------------------------------------------------------------
 # The factory package
