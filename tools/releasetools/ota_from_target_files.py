@@ -649,6 +649,24 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("Target: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.info_dict))
 
+  #Print ASCII
+  script.Print("***************************************************");
+  script.Print("**              .--.                             **");
+  script.Print("**             : .; :                            **");
+  script.Print("**             :    : .--.  .--. .---.           **");
+  script.Print("**             : :: :' .; :`._-.': .; `          **");
+  script.Print("**             :_;:_;`.__.'`.__.': ._.'          **");
+  script.Print("**                               : :             **");
+  script.Print("**                               :_;             **");
+  script.Print("** .--.        .-.               .-.         .-. **");
+  script.Print("**: .--'      .' `.              : :         : : **");
+  script.Print("**: `;  .-.,-.`. .'.--. ,-.,-. .-' : .--.  .-' : **");
+  script.Print("**: :__ `.  .' : :' '_.': ,. :' .; :' '_.'' .; : **");
+  script.Print("**`.__.':_,._; :_;`.__.':_;:_;`.__.'`.__.'`.__.' **");
+  script.Print("***************************************************");
+  script.Print("*                By:-ishubhamsingh                *");
+  script.Print("***************************************************");
+
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
 
