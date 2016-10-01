@@ -657,6 +657,23 @@ reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
+  #Print ASCII
+  script.Print("***************************************************");
+  script.Print("**              .--.                             **");
+  script.Print("**             : .; :                            **");
+  script.Print("**             :    : .--.  .--. .---.           **");
+  script.Print("**             : :: :' .; :`._-.': .; `          **");
+  script.Print("**             :_;:_;`.__.'`.__.': ._.'          **");
+  script.Print("**                               : :             **");
+  script.Print("**                               :_;             **");
+  script.Print("** .--.        .-.               .-.         .-. **");
+  script.Print("**: .--'      .' `.              : :         : : **");
+  script.Print("**: `;  .-.,-.`. .'.--. ,-.,-. .-' : .--.  .-' : **");
+  script.Print("**: :__ `.  .' : :' '_.': ,. :' .; :' '_.'' .; : **");
+  script.Print("**`.__.':_,._; :_;`.__.':_;:_;`.__.'`.__.'`.__.' **");
+  script.Print("***************************************************");
+  script.Print("*                By:-ishubhamsingh                *");
+  script.Print("***************************************************");
   script.Print(" ")
   script.AppendExtra("sleep (2);")
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
