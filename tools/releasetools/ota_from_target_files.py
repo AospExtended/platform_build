@@ -669,8 +669,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   builddate = GetBuildProp("ro.build.date", OPTIONS.info_dict)
   device = GetBuildProp("ro.product.model", OPTIONS.info_dict)
   script.Print("***************************************************");
-  script.Print("*          Build date: %s"%(builddate)"           *");
-  script.Print("*             Device: %s "%(device));"            *");
+  script.Print("           Build date: %s"%(builddate));
+  script.Print("              Device: %s "%(device));
   script.Print("***************************************************");
   
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
