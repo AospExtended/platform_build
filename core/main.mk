@@ -1156,7 +1156,7 @@ $(foreach module,$(sample_MODULES),$(eval $(call \
 sample_ADDITIONAL_INSTALLED := \
         $(filter-out $(modules_to_install) $(modules_to_check) $(ALL_PREBUILT),$(sample_MODULES))
 samplecode: $(sample_APKS_COLLECTION)
-	@echo -e ${CL_GRN}"Collect sample code apks:"${CL_RST}" $^"
+	@echo "Collect sample code apks:"" $^"
 	# remove apks that are not intended to be installed.
 	rm -f $(sample_ADDITIONAL_INSTALLED)
 endif  # samplecode in $(MAKECMDGOALS)
@@ -1166,8 +1166,8 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -rf $(OUT_DIR)/*
-	@echo -e ${CL_GRN}"Entire build directory removed."${CL_RST}
+	@rm -rf $(OUT_DIR)/* $(OUT_DIR)/..?* $(OUT_DIR)/.[!.]*
+	@echo "Entire build directory removed."
 
 .PHONY: clobber
 clobber: clean
@@ -1259,7 +1259,7 @@ systemclean:
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
-	@echo -e ${CL_GRN}"Available sub-modules:"${CL_RST}
+	@echo "Available sub-modules:"
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
 
