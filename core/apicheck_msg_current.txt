@@ -77,9 +77,6 @@ MMM+++++++++++++++~MM~~M $O,NM88MOMMZ$$MM$$$+++++++++MM777777777MMMM
                                                                   M
 
 
-      NO. NO. STOP BEING LAZY. SERIOUSLY.
-      DO NOT DO THIS in SLIM. THIS IS A LIE. IT WILL BREAK THINGS.
-
       To submit the revised current.txt to the main Android repository,
       you will need approval.
 ******************************
