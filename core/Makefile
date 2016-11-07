@@ -2001,6 +2001,7 @@ ifdef BOARD_OEMIMAGE_FILE_SYSTEM_TYPE
 	@# Contents of the oem image
 	$(call package_files-copy-root, \
 		$(TARGET_OUT_OEM),$(zip_root)/OEM)
+endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	@# Contents of the system_other image
 	$(hide) $(call package_files-copy-root, \
