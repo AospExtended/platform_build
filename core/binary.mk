@@ -393,6 +393,17 @@ ifeq ($(my_sdclang),true)
     ifeq ($(my_sdclang_2),true)
         $(error LOCAL_SDCLANG and LOCAL_SDCLANG_2 can not be set to true at the same time!)
     endif
+    ifneq ($(TARGET_USE_SDCLANG),true)
+        my_sdclang := false
+    endif
+endif
+
+ifeq ($(SDCLANG),true)
+    ifeq ($(my_sdclang),)
+        ifeq ($(TARGET_USE_SDCLANG),true)
+            my_sdclang := true
+        endif
+    endif
 endif
 
 ifeq ($(LOCAL_C_STD),)
