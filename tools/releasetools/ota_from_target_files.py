@@ -1414,7 +1414,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       care_map_data = target_zip.read(care_map_path)
       common.ZipWriteStr(output_zip, "care_map.txt", care_map_data)
     else:
-      print "Warning: cannot find care map file in target_file package"
+      print ("Warning: cannot find care map file in target_file package")
     common.ZipClose(target_zip)
 
   # Sign the whole package to comply with the Android OTA package format.
@@ -2052,15 +2052,15 @@ def main(argv):
       OPTIONS.gen_verify = True
     elif o == ("--log_diff",):
       OPTIONS.log_diff = a
-    elif o in ("--backup"):
+    elif o in ("--backup",):
       OPTIONS.backuptool = True
-    elif o in ("--override_device"):
+    elif o in ("--override_device",):
       OPTIONS.override_device = a
-    elif o in ("--override_prop"):
+    elif o in ("--override_prop",):
       OPTIONS.override_prop = True
-    elif o == "--payload_signer":
+    elif o == ("--payload_signer",):
       OPTIONS.payload_signer = a
-    elif o == "--payload_signer_args":
+    elif o == ("--payload_signer_args",):
       OPTIONS.payload_signer_args = shlex.split(a)
     else:
       return False
@@ -2093,7 +2093,7 @@ def main(argv):
                                  "log_diff=",
                                  "backup=",
                                  "override_device=",
-                                 "override_prop="
+                                 "override_prop=",
                                  "payload_signer=",
                                  "payload_signer_args=",
                              ], extra_option_handler=option_handler)
