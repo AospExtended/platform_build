@@ -662,7 +662,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" / // / // / /__  / / / -_) _ `/  ' \ ")
   script.Print(" \___/____/\___/ /_/  \__/\_,_/_/_/_/ ")
   script.Print(" ")
-  script.Print("The Android Open Source Project 7.0")
+  script.Print("The Android Open Source Project 7.1")
   script.Print(" ")
   script.AppendExtra("sleep (2);")
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
