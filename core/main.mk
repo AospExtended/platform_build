@@ -393,7 +393,6 @@ endif
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
 tags_to_install :=
-ADDITIONAL_BUILD_PROPERTIES += ro.setupwizard.mode=DISABLED
 ifneq (,$(user_variant))
   # Target is not secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
@@ -439,6 +438,12 @@ endif # !enable_target_debugging
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 tags_to_install := debug eng
+ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))),)
+  # Don't require the setup wizard on eng builds
+  ADDITIONAL_BUILD_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
+          $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))) \
+          ro.setupwizard.mode=OPTIONAL
+endif
 ifndef is_sdk_build
   # To speedup startup of non-preopted builds, don't verify or compile the boot image.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
