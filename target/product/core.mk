@@ -24,7 +24,6 @@ PRODUCT_PACKAGES += \
     BasicDreams \
     BlockedNumberProvider \
     BookmarkProvider \
-    Browser \
     CalendarProvider \
     CaptivePortalLogin \
     CertInstaller \
