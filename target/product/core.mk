@@ -24,7 +24,6 @@ PRODUCT_PACKAGES += \
     BasicDreams \
     BlockedNumberProvider \
     BookmarkProvider \
-    Browser \
     Calendar \
     CalendarProvider \
     CaptivePortalLogin \
@@ -33,16 +32,13 @@ PRODUCT_PACKAGES += \
     DeskClock \
     DocumentsUI \
     DownloadProviderUi \
-    Email \
     ExactCalculator \
-    Exchange2 \
     ExternalStorageProvider \
     FusedLocation \
     InputDevices \
     KeyChain \
     Keyguard \
     LatinIME \
-    Launcher2 \
     ManagedProvisioning \
     MtpDocumentsProvider \
     PicoTts \
