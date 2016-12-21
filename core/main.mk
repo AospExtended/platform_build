@@ -1055,15 +1055,6 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
 
-# To catch more build breakage, check build tests modules in userdebug builds.
-ifneq ($(ANDROID_NO_TEST_CHECK),true)
-ifneq ($(TARGET_BUILD_PDK),true)
-ifneq ($(filter userdebug,$(TARGET_BUILD_VARIANT)),)
-droidcore : target-tests host-tests
-endif
-endif
-endif
-
 .PHONY: lintall
 
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
