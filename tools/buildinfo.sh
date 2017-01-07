@@ -60,6 +60,6 @@ if [ -n "$BUILD_THUMBPRINT" ] ; then
 fi
 echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
 
-echo "ro.device.maintainer=$DEVICE_MAINTAINERS"
+echo "ro.aex.device=$AOSP_DEVICE"
 
 echo "# end build properties"
