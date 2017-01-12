@@ -674,12 +674,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("***************************************************");
   script.Print("*                By:-ishubhamsingh                *");
   script.Print("***************************************************");
-  builddate = GetBuildProp("ro.build.date", OPTIONS.info_dict)
-  device = GetBuildProp("ro.product.model", OPTIONS.info_dict)
-  script.Print("***************************************************");
-  script.Print("        Build date: %s"%(builddate));
-  script.Print("                Device: %s "%(device));
-  script.Print("***************************************************");
   script.Print(" ")
   script.AppendExtra("sleep (2);")
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
@@ -700,13 +694,46 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   system_progress = 0.75
 
+  if GetBuildProp("ro.extended.display.version", OPTIONS.info_dict) is not None:
+    buildid = GetBuildProp("ro.extended.display.version", OPTIONS.info_dict)
+    buildidn = GetBuildProp("ro.build.id", OPTIONS.info_dict)
+    buildday = GetBuildProp("ro.build.date", OPTIONS.info_dict)
+    securep = GetBuildProp("ro.build.version.security_patch", OPTIONS.info_dict)
+    density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict)
+    device = GetBuildProp("ro.aex.device", OPTIONS.info_dict)
+    androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
+    manifacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
+    sdkver = GetBuildProp("ro.build.version.sdk", OPTIONS.info_dict)
+    script.Print(" **************** Software *****************");
+    script.Print(" OS version: %s"%(buildid));
+    script.Print("");
+    script.Print(" Android version: %s"%(androidver));
+    script.Print("");
+    script.Print(" Security patch: %s"%(securep));
+    script.Print("");
+    script.Print(" SDK version: %s"%(sdkver));
+    script.Print("");
+    script.Print(" Root status: Enabled");
+    script.Print("");
+    script.Print(" Build ID: %s"%(buildidn));
+    script.Print("");
+    script.Print(" Build date: %s"%(buildday));
+    script.Print(" **************** Hardware *****************");
+    script.Print(" Device codename: %s"%(device));
+    script.Print("");
+    script.Print(" Manufacturer: %s"%(manifacturer));
+    script.Print("");
+    script.Print(" LCD density: %s"%(density));
+    script.Print("");
+    script.Print(" *******************************************");
+
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
 
-  # Place a copy of file_contexts.bin into the OTA package which will be used
-  # by the recovery program.
+# Place a copy of file_contexts.bin into the OTA package which will be used
+# by the recovery program.
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
