@@ -45,8 +45,8 @@ default_manifest = ".repo/manifest.xml"
 custom_local_manifest = ".repo/local_manifests/aex_manifest.xml"
 custom_default_revision = "7.1.1"
 custom_dependencies = "aosp.dependencies"
-org_manifest = "ex"  # leave empty if org is provided in manifest
-org_display = "AospExtended"  # needed for displaying
+org_manifest = "aex-devices"  # leave empty if org is provided in manifest
+org_display = "AospExtended-Devices"  # needed for displaying
 
 github_auth = None
 
