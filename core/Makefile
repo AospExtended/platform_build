@@ -2039,6 +2039,9 @@ endif
 ifdef BOARD_HAS_EXT4_RESERVED_BLOCKS
 	$(hide) echo "has_ext4_reserved_blocks=$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" >> $(zip_root)/META/misc_info.txt
 endif
+ifdef DEFAULT_ROOT_METHOD
+	$(hide) echo "default_root_method=$(DEFAULT_ROOT_METHOD)" >> $(zip_root)/META/misc_info.txt
+endif
 ifdef TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS
 	@# TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS can be empty to indicate that nothing but defaults should be used.
 	$(hide) echo "recovery_mount_options=$(TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS)" >> $(zip_root)/META/misc_info.txt
