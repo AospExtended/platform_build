@@ -742,6 +742,10 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
     manufacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
     sdkver = GetBuildProp("ro.build.version.sdk", OPTIONS.info_dict)
+    if (OPTIONS.info_dict.get("default_root_method") == "magisk" or OPTIONS.info_dict.get("default_root_method") == "supersu"):  
+      root_status = OPTIONS.info_dict.get("default_root_method")
+    else:
+      root_status = "disabled"
     script.Print(" **************** Software *****************");
     script.Print(" OS version: %s"%(buildid));
     script.Print("");
@@ -751,7 +755,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print("");
     script.Print(" SDK version: %s"%(sdkver));
     script.Print("");
-    script.Print(" Root status: Enabled");
+    script.Print(" Root status: %s"%(root_status));
     script.Print("");
     script.Print(" Build ID: %s"%(buildidn));
     script.Print("");
