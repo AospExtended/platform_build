@@ -700,7 +700,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict,False)
     device = GetBuildProp("ro.aex.device", OPTIONS.info_dict)
     androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
-    manifacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
+    manufacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
     sdkver = GetBuildProp("ro.build.version.sdk", OPTIONS.info_dict)
     script.Print(" **************** Software *****************");
     script.Print(" OS version: %s"%(buildid));
@@ -719,7 +719,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print(" **************** Hardware *****************");
     script.Print(" Device codename: %s"%(device));
     script.Print("");
-    script.Print(" Manufacturer: %s"%(manifacturer));
+    script.Print(" Manufacturer: %s"%(manufacturer));
     script.Print("");
     script.Print(" LCD density: %s"%(density));
     script.Print("");
