@@ -697,7 +697,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     buildidn = GetBuildProp("ro.build.id", OPTIONS.info_dict)
     buildday = GetBuildProp("ro.build.date", OPTIONS.info_dict)
     securep = GetBuildProp("ro.build.version.security_patch", OPTIONS.info_dict)
-    density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict)
+    density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict,False)
     device = GetBuildProp("ro.aex.device", OPTIONS.info_dict)
     androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
     manifacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
@@ -894,12 +894,15 @@ def LoadPartitionFiles(z, partition):
   return out
 
 
-def GetBuildProp(prop, info_dict):
+def GetBuildProp(prop, info_dict, raise_error=True):
   """Return the fingerprint of the build of a given target-files info_dict."""
   try:
     return info_dict.get("build.prop", {})[prop]
   except KeyError:
-    raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+    if raise_error:
+      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+    else:
+      return "Unknow"
 
 
 def AddToKnownPaths(filename, known_paths):
