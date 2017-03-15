@@ -699,11 +699,15 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     buildidn = GetBuildProp("ro.build.id", OPTIONS.info_dict)
     buildday = GetBuildProp("ro.build.date", OPTIONS.info_dict)
     securep = GetBuildProp("ro.build.version.security_patch", OPTIONS.info_dict)
-    density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict)
+    density = GetBuildProp("ro.sf.lcd_density", OPTIONS.info_dict,False)
     device = GetBuildProp("ro.aex.device", OPTIONS.info_dict)
     androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
-    manifacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
+    manufacturer = GetBuildProp("ro.product.manufacturer", OPTIONS.info_dict)
     sdkver = GetBuildProp("ro.build.version.sdk", OPTIONS.info_dict)
+    if (OPTIONS.info_dict.get("default_root_method") == "magisk" or OPTIONS.info_dict.get("default_root_method") == "supersu"):  
+      root_status = OPTIONS.info_dict.get("default_root_method")
+    else:
+      root_status = "disabled"
     script.Print(" **************** Software *****************");
     script.Print(" OS version: %s"%(buildid));
     script.Print("");
@@ -713,7 +717,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print("");
     script.Print(" SDK version: %s"%(sdkver));
     script.Print("");
-    script.Print(" Root status: Enabled");
+    script.Print(" Root status: %s"%(root_status));
     script.Print("");
     script.Print(" Build ID: %s"%(buildidn));
     script.Print("");
@@ -721,7 +725,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print(" **************** Hardware *****************");
     script.Print(" Device codename: %s"%(device));
     script.Print("");
-    script.Print(" Manufacturer: %s"%(manifacturer));
+    script.Print(" Manufacturer: %s"%(manufacturer));
     script.Print("");
     script.Print(" LCD density: %s"%(density));
     script.Print("");
@@ -894,12 +898,15 @@ def LoadPartitionFiles(z, partition):
   return out
 
 
-def GetBuildProp(prop, info_dict):
+def GetBuildProp(prop, info_dict, raise_error=True):
   """Return the fingerprint of the build of a given target-files info_dict."""
   try:
     return info_dict.get("build.prop", {})[prop]
   except KeyError:
-    raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+    if raise_error:
+      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+    else:
+      return "Unknow"
 
 
 def AddToKnownPaths(filename, known_paths):
