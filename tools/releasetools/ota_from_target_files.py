@@ -781,16 +781,16 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.UnmountAll()
   
-  # Install SuperSU. 
+  # Install Magisk.
   
-  script.Print("Extracting SuperSU...");
-  script.AppendExtra('package_extract_dir("install/supersu", "/tmp/supersu");')
-  script.AppendExtra('run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/update-binary", "-d", "/tmp/supersu");')
-  script.Print("Installing SuperSU...");
-  script.AppendExtra('run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "null", "1", "/tmp/supersu/supersu.zip");')
+  script.Print("Extracting Magisk...");
+  script.AppendExtra('package_extract_dir("install/magisk", "/tmp/magisk");')
+  script.AppendExtra('run_program("/sbin/busybox", "unzip", "/tmp/magisk/Magisk.zip", "META-INF/com/google/android/update-binary", "-d", "/tmp/magisk");')
+  script.Print("Installing Magisk...");
+  script.AppendExtra('run_program("/sbin/busybox", "sh", "/tmp/magisk/META-INF/com/google/android/update-binary", "null", "1", "/tmp/magisk/Magisk.zip");')
 
   script.Print("Cleaning up...");
-  script.AppendExtra('delete_recursive("/tmp/supersu");')
+  script.AppendExtra('delete_recursive("/tmp/magisk");')
 
   script.Print("Installation complete!");
 
