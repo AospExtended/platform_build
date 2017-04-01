@@ -660,7 +660,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" / // / // / /__  / / / -_) _ `/  ' \ ")
   script.Print(" \___/____/\___/ /_/  \__/\_,_/_/_/_/ ")
   script.Print(" ")
-  script.Print("The Android Open Source Project 7.1.1")
+  script.Print("The Android Open Source Project 6.0")
   script.Print(" ")
   script.AppendExtra("sleep (2);")
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
@@ -780,18 +780,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.AppendExtra(OPTIONS.extra_script)
 
   script.UnmountAll()
-  
-  # Install Magisk.
-  
-  script.Print("Extracting Magisk...");
-  script.AppendExtra('package_extract_dir("install/magisk", "/tmp/magisk");')
-  script.AppendExtra('run_program("/sbin/busybox", "unzip", "/tmp/magisk/Magisk.zip", "META-INF/com/google/android/update-binary", "-d", "/tmp/magisk");')
-  script.Print("Installing Magisk...");
-  script.AppendExtra('run_program("/sbin/busybox", "sh", "/tmp/magisk/META-INF/com/google/android/update-binary", "null", "1", "/tmp/magisk/Magisk.zip");')
-
-  script.Print("Cleaning up...");
-  script.AppendExtra('delete_recursive("/tmp/magisk");')
-
   script.Print("Installation complete!");
 
   if OPTIONS.wipe_user_data:
@@ -2043,7 +2031,7 @@ def main(argv):
     elif o in ("--no_fallback_to_full",):
       OPTIONS.fallback_to_full = False
     elif o in ("--backup"):
-      OPTIONS.backuptool = True
+      OPTIONS.backuptool = bool(a.lower() == 'true')
     elif o == "--stash_threshold":
       try:
         OPTIONS.stash_threshold = float(a)
@@ -2059,11 +2047,11 @@ def main(argv):
     elif o == "--payload_signer_args":
       OPTIONS.payload_signer_args = shlex.split(a)
     elif o in ("--backup"):
-      OPTIONS.backuptool = True
+      OPTIONS.backuptool = bool(a.lower() == 'true')
     elif o in ("--override_device"):
       OPTIONS.override_device = a
     elif o in ("--override_prop"):
-      OPTIONS.override_prop = True
+      OPTIONS.override_prop = bool(a.lower() == 'true')
     else:
       return False
     return True
