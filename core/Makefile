@@ -2188,11 +2188,9 @@ endif
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	@echo -e ${CL_YLW}"Package OTA:"${CL_RST}" $@"
 
-# Assume non-release recoveries to skip signature check
-ifeq ($(TARGET_BUILD_VARIANT),user)
-    sign_arg := -k $(KEY_CERT_PAIR)
-else
-    sign_arg := --no_signing
+# Assume non-release recoveries skip signature check
+ifneq ($(TARGET_BUILD_VARIANT),user)
+    extra_ota_args := --no_signing
 endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
@@ -2203,8 +2201,9 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	   -p $(HOST_OUT) \
 	   -k $(KEY_CERT_PAIR) \
 	   --backup=$(backuptool) \
+	   -k $(KEY_CERT_PAIR) \
+	   $(extra_ota_args) \
 	   --override_device=$(override_device) $(override_prop) \
-	   $(sign_arg) \
 	   --override_device=$(override_device) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
