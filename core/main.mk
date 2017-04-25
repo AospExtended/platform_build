@@ -91,6 +91,10 @@ ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
 endif
 
+ifeq ($(MAKECMDGOALS),kernelclean)
+dont_bother := true
+endif
+
 ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
 # Targets that provide quick help on the build system.
@@ -1098,6 +1102,13 @@ modules:
 	@echo -e ${CL_GRN}"Available sub-modules:"${CL_RST}
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
+
+.PHONY: kernelclean
+kernelclean:
+	@rm -rf $(OUT_DIR)/target/product/*/kernel
+	@rm -rf $(OUT_DIR)/target/product/*/boot.img
+	@rm -rf $(OUT_DIR)/target/product/*/obj/KERNEL_OBJ
+	@echo -e ${CL_GRN}"All kernel compnents have been erased"${CL_RST}
 
 .PHONY: showcommands
 showcommands:
