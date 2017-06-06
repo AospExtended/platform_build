@@ -22,7 +22,7 @@ PRODUCT_PACKAGES := \
     BluetoothMidiService \
     Camera2 \
     Gallery2 \
-    AudioFX \
+    MusicFX \
     OneTimeInitializer \
     Provision \
     SystemUI \
