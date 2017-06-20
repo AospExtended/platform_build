@@ -316,6 +316,15 @@ endif
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
+ifeq ($(TARGET_OVERRIDES_VENDOR_BUILD_PROP_FINGERPRINT),true)
+$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
+	@echo Target vendor buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
+	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
+	$(hide) echo ro.vendor.build.fingerprint="$(PRODUCT_VENDOR_BUILD_PROP_FINGERPRINT)">>$@
+else
 $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
@@ -323,6 +332,7 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
 	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
 	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+endif
 endif
 
 # -----------------------------------------------------------------
