@@ -267,6 +267,7 @@ _product_stash_var_list := $(_product_var_list) \
 	TARGET_HARDWARE_3D \
 	TARGET_CPU_ABI \
 	TARGET_CPU_ABI2 \
+	DEVICE_MAINTAINERS \
 
 
 _product_stash_var_list += \
