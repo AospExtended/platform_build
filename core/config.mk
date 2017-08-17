@@ -235,6 +235,10 @@ FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
 
 -include vendor/extra/BoardConfigExtra.mk
 
+ifneq ($(CUSTOM_BUILD),)
+include vendor/aosp/config/BoardConfigAosp.mk
+endif
+
 # The build system exposes several variables for where to find the kernel
 # headers:
 #   TARGET_DEVICE_KERNEL_HEADERS is automatically created for the current
@@ -1173,5 +1177,17 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
+
+ifneq ($(CUSTOM_BUILD),)
+## We need to be sure the global selinux policies are included
+## last, to avoid accidental resetting by device configs
+$(eval include device/aosp/sepolicy/common/sepolicy.mk)
+
+# Include any vendor specific config.mk file
+-include vendor/*/build/core/config.mk
+
+# Include any vendor specific apicheck.mk file
+-include vendor/*/build/core/apicheck.mk
+endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk
