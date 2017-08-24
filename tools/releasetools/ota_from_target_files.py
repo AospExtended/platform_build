@@ -2244,6 +2244,7 @@ def main(argv):
                                  "payload_signer=",
                                  "payload_signer_args=",
                                  "override_device=",
+                                 ], extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
