@@ -603,6 +603,7 @@ function print_lunch_menu()
 function lunch()
 {
     local answer
+    LUNCH_MENU_CHOICES=($(for l in ${LUNCH_MENU_CHOICES[@]}; do echo "$l"; done | sort))
 
     if [ "$1" ] ; then
         answer=$1
@@ -626,24 +627,12 @@ function lunch()
         then
             selection=${LUNCH_MENU_CHOICES[$(($answer-$_arrayoffset))]}
         fi
-    else
+    elif (echo -n $answer | grep -q -e "^[^\-][^\-]*-[^\-][^\-]*$")
+    then
         selection=$answer
     fi
 
-    export TARGET_BUILD_APPS=
-
-    local product variant_and_version variant version
-
-    product=${selection%%-*} # Trim everything after first dash
-    variant_and_version=${selection#*-} # Trim everything up to first dash
-    if [ "$variant_and_version" != "$selection" ]; then
-        variant=${variant_and_version%%-*}
-        if [ "$variant" != "$variant_and_version" ]; then
-            version=${variant_and_version#*-}
-        fi
-    fi
-
-    if [ -z "$product" ]
+    if [ -z "$selection" ]
     then
         echo ""
         echo "Come on man, pay attention to what you're doing"
@@ -651,6 +640,9 @@ function lunch()
         return 1
     fi
 
+    export TARGET_BUILD_APPS=
+
+    local product=${selection%%-*} # Trim everything after first dash
     check_product $product
 
     TARGET_PRODUCT=$product \
@@ -670,13 +662,23 @@ function lunch()
     fi
     if [ $? -ne 0 ]
     then
+
+    local variant_and_version variant version
+    variant_and_version=${selection#*-} # Trim everything up to first dash
+    if [ "$variant_and_version" != "$selection" ]; then
+        variant=${variant_and_version%%-*}
+        if [ "$variant" != "$variant_and_version" ]; then
+            version=${variant_and_version#*-}
+        fi
+    fi
+
         return 1
     fi
 
-    export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
-    export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
+    export TARGET_PRODUCT=$product
+    export TARGET_BUILD_VARIANT=$variant
     if [ -n "$version" ]; then
-      export TARGET_PLATFORM_VERSION=$(get_build_var TARGET_PLATFORM_VERSION)
+      export TARGET_PLATFORM_VERSION=$version
     else
       unset TARGET_PLATFORM_VERSION
     fi
