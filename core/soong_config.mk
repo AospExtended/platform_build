@@ -17,7 +17,7 @@ endif
 # but only updates soong.variables if it changes
 SOONG_VARIABLES_TMP := $(shell mktemp -u)
 include vendor/aosp/build/soong/soong_config.mk
-$(SOONG_VARIABLES): FORCE lineage_soong
+$(SOONG_VARIABLES): FORCE jdc_soong
 	$(hide) (\
 	echo '    "Make_suffix": "-$(TARGET_PRODUCT)",'; \
 	echo ''; \
