@@ -849,6 +849,35 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # All other partitions as well as the data wipe use 10% of the progress, and
   # the update of the system partition takes the remaining progress.
   system_progress = 0.9 - (len(block_diff_dict) - 1) * 0.1
+
+  if target_info.GetBuildProp("ro.extended.display.version") is not None:
+    buildid = target_info.GetBuildProp("ro.extended.display.version")
+    buildidn = target_info.GetBuildProp("ro.build.id")
+    buildday = target_info.GetBuildProp("ro.build.date")
+    securep = target_info.GetBuildProp("ro.build.version.security_patch")
+    device = target_info.GetBuildProp("ro.aex.device")
+    androidver = target_info.GetBuildProp("ro.build.version.release")
+    manifacturer = target_info.GetBuildProp("ro.product.manufacturer")
+    sdkver = target_info.GetBuildProp("ro.build.version.sdk")
+    script.Print("-------------------- Software --------------------");
+    script.Print(" OS version: %s"%(buildid));
+    script.Print("");
+    script.Print(" Android version: %s"%(androidver));
+    script.Print("");
+    script.Print(" Security patch: %s"%(securep));
+    script.Print("");
+    script.Print(" SDK version: %s"%(sdkver));
+    script.Print("");
+    script.Print(" Build ID: %s"%(buildidn));
+    script.Print("");
+    script.Print(" Build date: %s"%(buildday));
+    script.Print("-------------------- Hardware --------------------");
+    script.Print(" Device codename: %s"%(device));
+    script.Print("");
+    script.Print(" Manufacturer: %s"%(manifacturer));
+    script.Print("");
+    script.Print("--------------------------------------------------");
+
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
   progress_dict = {partition: 0.1 for partition in block_diff_dict}
