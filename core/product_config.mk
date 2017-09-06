@@ -168,9 +168,9 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-# A Lineage build needs only the Lineage product makefiles.
+# A AOSP build needs only the AOSP product makefiles.
 ifneq ($(CUSTOM_BUILD),)
-  all_product_configs := $(shell ls vendor/aosp/products/jdc_$(CUSTOM_BUILD).mk)
+  all_product_configs := $(shell find device -path "*/$(CUSTOM_BUILD)/aosp_$(CUSTOM_BUILD).mk")
 else
   ifneq ($(strip $(TARGET_BUILD_APPS)),)
   # An unbundled app build needs only the core product makefiles.
