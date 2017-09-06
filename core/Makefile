@@ -4230,7 +4230,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	@echo "Package OTA: $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --output_metadata_path $(INTERNAL_OTA_METADATA) --backup=$(backuptool))
 
-TARGET_PACKAGE := $(PRODUCT_OUT)/AOSP-$(PLATFORM_VERSION)-$(shell date +%Y%m%d)-$(TARGET_DEVICE).zip
+TARGET_PACKAGE := $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(TARGET_DEVICE)-$(shell date -u +%Y%m%d-%H%M)-$(EXTENDED_BUILD_TYPE).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
