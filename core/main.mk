@@ -717,7 +717,8 @@ $(foreach t,$($(2).TYPE),\
 endef
 
 # TODO: Verify all branches/configs have reasonable warnings/errors, and remove
-# this override
+# these overrides
+link-type-missing = $(eval $$(1).MISSING := true)
 verify-link-type = $(eval $$(1).MISSING := true)
 
 $(foreach lt,$(ALL_LINK_TYPES),\
