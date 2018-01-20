@@ -1890,7 +1890,7 @@ define build-recoveryimage-target
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
   $(hide) ./vendor/aosp/tools/changelog
-  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(shell date -u +%Y%m%d-%H%M)-Changelog.txt
+  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(EXTENDED_BUILD_DATE)-Changelog.txt
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
     $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1).unsigned, \
     $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1) --id > $(RECOVERYIMAGE_ID_FILE))
@@ -4244,7 +4244,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	@echo "Package OTA: $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --output_metadata_path $(INTERNAL_OTA_METADATA) --backup=$(backuptool))
 
-TARGET_PACKAGE := $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(TARGET_DEVICE)-$(shell date -u +%Y%m%d-%H%M)-$(EXTENDED_BUILD_TYPE).zip
+TARGET_PACKAGE := $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(TARGET_DEVICE)-$(EXTENDED_BUILD_DATE)-$(EXTENDED_BUILD_TYPE).zip
 
 .PHONY: otapackage bacon aex
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
