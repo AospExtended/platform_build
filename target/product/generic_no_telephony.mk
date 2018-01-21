@@ -28,6 +28,7 @@ PRODUCT_PACKAGES := \
     SystemUI \
     SystemBlackThemeOverlay \
     SystemDarkThemeOverlay \
+    SystemExtendedThemeOverlay \
     EasterEgg \
     WallpaperCropper
 
