@@ -903,8 +903,9 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
         context = i
 
     mount_point = pieces[1]
-    d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
-                               device=pieces[0], length=length, context=context,
+    if not d.get(mount_point):
+        d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
+                                   device=pieces[0], length=length, context=context,
                                slotselect=slotselect)
 
   # / is used for the system mount point when the root directory is included in
