@@ -372,44 +372,42 @@ endif
 # vendor build.prop
 #
 # For verifying that the vendor build is what we think it is
-#ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-#INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
-#ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
+ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
 
-#ifdef property_overrides_split_enabled
-#FINAL_VENDOR_BUILD_PROPERTIES += \
-#    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
-#FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-#    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
-#endif  # property_overrides_split_enabled
+ifdef property_overrides_split_enabled
+FINAL_VENDOR_BUILD_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
+FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
+endif  # property_overrides_split_enabled
 
-#$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_system_build_prop)
-#	@echo Target vendor buildinfo: $@
-#	@mkdir -p $(dir $@)
-#	$(hide) echo > $@
-#	$(hide) grep 'ro.product.first_api_level' $(intermediate_system_build_prop) >> $@ || true
-#	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
-#	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
-#ifndef skip_fingerprint_from_file
-#	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
-#endif
-#ifdef property_overrides_split_enabled
-#	$(hide) TARGET_DEVICE="$(TARGET_DEVICE)" \
-#			PRODUCT_NAME="$(TARGET_PRODUCT)" \
-#			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
-#			PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-#			PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
-#			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
-#			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
-#	        bash $(VENDOR_BUILDINFO_SH) >> $@
-#	$(hide) echo "#" >> $@; \
-#	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
-#	        echo "#" >> $@;
-#	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
-#		echo "$(line)" >> $@;)
-#	$(hide) build/tools/post_process_props.py $@
-#endif  # property_overrides_split_enabled
-#endif  # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_system_build_prop)
+	@echo Target vendor buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+	$(hide) grep 'ro.product.first_api_level' $(intermediate_system_build_prop) >> $@ || true
+	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
+	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
+	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+ifdef property_overrides_split_enabled
+	$(hide) TARGET_DEVICE="$(TARGET_DEVICE)" \
+			PRODUCT_NAME="$(TARGET_PRODUCT)" \
+			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
+			PRODUCT_MODEL="$(PRODUCT_MODEL)" \
+			PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
+			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
+			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
+	        bash $(VENDOR_BUILDINFO_SH) >> $@
+	$(hide) echo "#" >> $@; \
+	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
+		echo "$(line)" >> $@;)
+	$(hide) build/tools/post_process_props.py $@
+endif  # property_overrides_split_enabled
+endif  # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 
 # ----------------------------------------------------------------
 
