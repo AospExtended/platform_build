@@ -49,12 +49,6 @@ PRODUCT_PACKAGES += \
     PrintRecommendationService \
     ProxyHandler \
     Settings \
-    SettingsBlackThemeOverlay \
-    SettingsDarkThemeOverlay \
-    SettingsExtendedThemeOverlay \
-    DuiDarkTheme \
-    DuiBlackTheme \
-    DuiExtendedTheme \
     SharedStorageBackup \
     StorageManager \
     Telecom \
