@@ -670,8 +670,9 @@ endif
 endif
 
 INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE) buildvariant=$(TARGET_BUILD_VARIANT) $(VERITY_KEYID))
+INTERNAL_BOOTIMAGE_CMDLINE := $(strip $(INTERNAL_KERNEL_CMDLINE) $(BOARD_BOOTIMAGE_CMDLINE))
 ifdef INTERNAL_KERNEL_CMDLINE
-INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_BOOTIMAGE_CMDLINE)"
 endif
 
 INTERNAL_MKBOOTIMG_VERSION_ARGS := \
@@ -1700,7 +1701,7 @@ define build-boottarball-target
     $(hide) echo "Target boot fs tarball: $(INSTALLED_BOOTTARBALL_TARGET)"
     $(hide) mkdir -p $(PRODUCT_OUT)/boot
     $(hide) cp -f $(INTERNAL_BOOTIMAGE_FILES) $(PRODUCT_OUT)/boot/.
-    $(hide) echo $(INTERNAL_KERNEL_CMDLINE) > $(PRODUCT_OUT)/boot/cmdline
+    $(hide) echo $(INTERNAL_BOOTIMAGE_CMDLINE) > $(PRODUCT_OUT)/boot/cmdline
     $(hide) $(MKTARBALL) $(FS_GET_STATS) \
                  $(PRODUCT_OUT) boot $(PRIVATE_BOOT_TAR) \
                  $(INSTALLED_BOOTTARBALL_TARGET) $(TARGET_OUT)
@@ -2452,8 +2453,8 @@ endif
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
 endif
-ifdef INTERNAL_KERNEL_CMDLINE
-	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
+ifdef INTERNAL_BOOTIMAGE_CMDLINE
+	$(hide) echo "$(INTERNAL_BOOTIMAGE_CMDLINE)" > $(zip_root)/BOOT/cmdline
 endif
 ifdef BOARD_KERNEL_TAGS_OFFSET
 	$(hide) echo "$(BOARD_KERNEL_TAGS_OFFSET)" > $(zip_root)/BOOT/tags_offset
