@@ -1198,6 +1198,11 @@ $(eval include device/aosp/sepolicy/common/sepolicy.mk)
 # Include any vendor specific apicheck.mk file
 -include vendor/*/build/core/apicheck.mk
 
+# We modify several neverallows, so let the build proceed
+ifneq ($(TARGET_BUILD_VARIANT),user)
+SELINUX_IGNORE_NEVERALLOWS := true
+endif
+
 # Rules for QCOM targets
 -include vendor/*/build/core/qcom_target.mk
 
@@ -1206,3 +1211,4 @@ $(eval include device/aosp/sepolicy/common/sepolicy.mk)
 endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk
+
