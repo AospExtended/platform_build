@@ -1103,6 +1103,11 @@ ifneq ($(CUSTOM_BUILD),)
 # Include any vendor specific apicheck.mk file
 -include $(TOPDIR)vendor/*/build/core/apicheck.mk
 
+# We modify several neverallows, so let the build proceed
+ifneq ($(TARGET_BUILD_VARIANT),user)
+SELINUX_IGNORE_NEVERALLOWS := true
+endif
+
 # Rules for QCOM targets
 -include $(TOPDIR)vendor/aosp/build/core/qcom_target.mk
 
@@ -1111,3 +1116,4 @@ ifneq ($(CUSTOM_BUILD),)
 endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk
+
