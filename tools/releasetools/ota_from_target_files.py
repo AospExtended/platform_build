@@ -372,7 +372,7 @@ class BuildInfo(object):
   def items(self):
     return self.info_dict.items()
 
-  def GetBuildProp(self, prop):
+  def GetBuildProp(self, prop, raise_error=True):
     """Returns the inquired build property."""
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
       return self._ResolveRoProductBuildProp(prop)
@@ -380,7 +380,10 @@ class BuildInfo(object):
     try:
       return self.info_dict.get("build.prop", {})[prop]
     except KeyError:
-      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+      if raise_error:
+        raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+      else:
+        return "Unknow"
 
   def _ResolveRoProductBuildProp(self, prop):
     """Resolves the inquired ro.product.* build property"""
@@ -999,10 +1002,10 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     buildidn = target_info.GetBuildProp("ro.build.id")
     buildday = target_info.GetBuildProp("ro.build.date")
     securep = target_info.GetBuildProp("ro.build.version.security_patch")
-    density = target_info.GetBuildProp("ro.sf.lcd_density")
+    density = target_info.GetBuildProp("ro.sf.lcd_density",False)
     device = target_info.GetBuildProp("ro.aex.device")
     androidver = target_info.GetBuildProp("ro.build.version.release")
-    manifacturer = target_info.GetBuildProp("ro.product.manufacturer")
+    manufacturer = target_info.GetBuildProp("ro.product.manufacturer")
     sdkver = target_info.GetBuildProp("ro.build.version.sdk")
     script.Print("------------------- Software -------------------");
     script.Print(" OS version: %s"%(buildid));
@@ -1021,7 +1024,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print("------------------- Hardware -------------------");
     script.Print(" Device codename: %s"%(device));
     script.Print("");
-    script.Print(" Manufacturer: %s"%(manifacturer));
+    script.Print(" Manufacturer: %s"%(manufacturer));
     script.Print("");
     script.Print(" LCD density: %s"%(density));
     script.Print("");
