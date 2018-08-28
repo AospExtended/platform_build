@@ -98,10 +98,4 @@ include $(SDCLANG_LTO_DEFS)
 endif
 endif
 
-ifeq ($(LOCAL_SDCLANG_2),true)
-ifeq ($(LOCAL_SDCLANG_LTO),true)
-include $(SDCLANG_LTO_DEFS)
-endif
-endif
-
 endif
