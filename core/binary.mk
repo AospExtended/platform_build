@@ -394,13 +394,6 @@ ifeq ($(my_sdclang),true)
         $(error LOCAL_SDCLANG and LOCAL_SDCLANG_2 can not be set to true at the same time!)
     endif
 endif
-ifeq ($(SDCLANG),true)
-    ifeq ($(my_sdclang),)
-        ifneq ($(my_sdclang_2),true)
-            my_sdclang := true
-        endif
-    endif
-endif
 
 ifeq ($(LOCAL_C_STD),)
     my_c_std_version := $(DEFAULT_C_STD_VERSION)
@@ -568,14 +561,6 @@ my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOB
         endif
         ifeq ($(strip $(my_cxx)),)
             my_cxx := $(SDCLANG_PATH)/clang++
-        endif
-    endif
-    ifeq ($(my_sdclang_2),true)
-        ifeq ($(strip $(my_cc)),)
-            my_cc := $(SDCLANG_PATH_2)/clang
-        endif
-        ifeq ($(strip $(my_cxx)),)
-            my_cxx := $(SDCLANG_PATH_2)/clang++
         endif
     endif
 else
