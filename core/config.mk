@@ -230,6 +230,9 @@ $(call project-set-path-variant,ril,TARGET_RIL_VARIANT,hardware/ril)
 $(call project-set-path-variant,recovery,RECOVERY_VARIANT,bootable/recovery)
 
 -include vendor/extra/BoardConfigExtra.mk
+ifneq ($(CUSTOM_BUILD),)
+include vendor/aosp/config/BoardConfigAosp.mk
+endif
 
 # The build system exposes several variables for where to find the kernel
 # headers:
