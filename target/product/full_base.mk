@@ -39,8 +39,8 @@ PRODUCT_PACKAGES += \
 
 # Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
-    ro.config.ringtone=Zen.ogg \
-    ro.config.notification_sound=Chime.ogg
+    ro.config.ringtone=Zen_too.ogg \
+    ro.config.notification_sound=Pipes.ogg
 
 # Put en_US first in the list, so make it default.
 PRODUCT_LOCALES := en_US

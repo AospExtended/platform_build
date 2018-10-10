@@ -17,8 +17,8 @@
 # that should not be in PDK should be added in lower level like core.mk.
 
 PRODUCT_PROPERTY_OVERRIDES := \
-    ro.config.notification_sound=Chime.ogg \
-    ro.config.alarm_alert=Flow.ogg
+    ro.config.notification_sound=Pipes.ogg \
+    ro.config.alarm_alert=Gentle_breeze.ogg
 
 PRODUCT_PACKAGES += \
     ContactsProvider \
