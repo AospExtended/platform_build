@@ -39,7 +39,7 @@ PRODUCT_PACKAGES += \
     InputDevices \
     KeyChain \
     Keyguard \
-    SearchLauncherQuickStep \
+    Launcher3QuickStep \
     ManagedProvisioning \
     MtpDocumentsProvider \
     PacProcessor \
