@@ -1002,7 +1002,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     buildidn = target_info.GetBuildProp("ro.build.id")
     buildday = target_info.GetBuildProp("ro.build.date")
     securep = target_info.GetBuildProp("ro.build.version.security_patch")
-    density = target_info.GetBuildProp("ro.sf.lcd_density",False)
     device = target_info.GetBuildProp("ro.aex.device")
     androidver = target_info.GetBuildProp("ro.build.version.release")
     manufacturer = target_info.GetBuildProp("ro.product.manufacturer")
@@ -1026,9 +1025,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print("");
     script.Print(" Manufacturer: %s"%(manufacturer));
     script.Print("");
-    script.Print(" LCD density: %s"%(density));
-    script.Print("");
-    script.Print("--------------------------------------------------");
+    script.Print("------------------------------------------------");
 
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
