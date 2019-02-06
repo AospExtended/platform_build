@@ -765,7 +765,11 @@ endif
 
 INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION) \
+ifeq (TARGET_USES_VENDOR_SECURITY_PATCH_ON_BOOT), true)
+    --os_patch_level $(VENDOR_SECURITY_PATCH)
+else
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
+endif
 
 INSTALLED_DTIMAGE_TARGET := $(PRODUCT_OUT)/dt.img
 
