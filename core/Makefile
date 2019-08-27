@@ -3206,7 +3206,8 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-TARGET_PACKAGE := $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(TARGET_DEVICE)-$(EXTENDED_BUILD_DATE)-$(EXTENDED_BUILD_TYPE).zip
+TARGET_FILE_NAME := AospExtended-$(EXTENDED_VERSION)-$(TARGET_DEVICE)-$(EXTENDED_BUILD_DATE)-$(EXTENDED_BUILD_TYPE).zip
+TARGET_PACKAGE := $(PRODUCT_OUT)/$(TARGET_FILE_NAME)
 
 .PHONY: otapackage bacon aex
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
@@ -3214,7 +3215,7 @@ bacon: otapackage
 bacon: aex
 aex: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(TARGET_PACKAGE) > $(TARGET_PACKAGE).md5sum
+	$(hide) cd  $(PRODUCT_OUT) && $(MD5SUM) $(TARGET_FILE_NAME) > $(TARGET_FILE_NAME).md5sum && cd $(TOPDIR)
 	@echo -e ${CL_RST} ""
 	@echo -e ${CL_RST} " ▄▄▄·       .▄▄ ·  ▄▄▄·▄▄▄ .▐▄• ▄ ▄▄▄▄▄▄▄▄ . ▐ ▄ ·▄▄▄▄  ▄▄▄ .·▄▄▄▄  "
 	@echo -e ${CL_RST} "▐█ ▀█ ▪     ▐█ ▀. ▐█ ▄█▀▄.▀· █▌█▌▪•██  ▀▄.▀·•█▌▐███▪ ██ ▀▄.▀·██▪ ██ "
