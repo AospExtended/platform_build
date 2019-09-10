@@ -1,5 +1,17 @@
 # Put some miscellaneous rules here
 
+# Build system colors
+
+ifneq ($(BUILD_WITH_COLORS),0)
+  CL_RED="\033[31m"
+  CL_GRN="\033[32m"
+  CL_YLW="\033[33m"
+  CL_BLU="\033[34m"
+  CL_MAG="\033[35m"
+  CL_CYN="\033[36m"
+  CL_RST="\033[0m"
+endif
+
 # HACK: clear LOCAL_PATH from including last build target before calling
 # intermedites-dir-for
 LOCAL_PATH := $(BUILD_SYSTEM)
@@ -4237,11 +4249,20 @@ otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otardppackage
   $(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(TARGET_PACKAGE) > $(TARGET_PACKAGE).md5sum
-	@echo -e ${CL_BLD}${CL_CYN}"===============================-Package complete-==============================="${CL_RST}
+	@echo -e ${CL_RST} ""
+	@echo -e ${CL_RST} " ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄    ▄▄▄▄▄▄▄ ▄▄   ▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄    ▄ ▄▄▄▄▄▄  ▄▄▄▄▄▄▄ ▄▄▄▄▄▄  "
+	@echo -e ${CL_RST} "█       █       █       █       █  █       █  █▄█  █       █       █  █  █ █      ██       █      █ "
+	@echo -e ${CL_RST} "█   ▄   █   ▄   █  ▄▄▄▄▄█    ▄  █  █    ▄▄▄█       █▄     ▄█    ▄▄▄█   █▄█ █  ▄    █    ▄▄▄█  ▄    █"
+	@echo -e ${CL_RST} "█  █▄█  █  █ █  █ █▄▄▄▄▄█   █▄█ █  █   █▄▄▄█       █ █   █ █   █▄▄▄█       █ █ █   █   █▄▄▄█ █ █   █"
+	@echo -e ${CL_RST} "█       █  █▄█  █▄▄▄▄▄  █    ▄▄▄█  █    ▄▄▄██     █  █   █ █    ▄▄▄█  ▄    █ █▄█   █    ▄▄▄█ █▄█   █"
+	@echo -e ${CL_RST} "█   ▄   █       █▄▄▄▄▄█ █   █      █   █▄▄▄█   ▄   █ █   █ █   █▄▄▄█ █ █   █       █   █▄▄▄█       █"
+	@echo -e ${CL_RST} "█▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄█      █▄▄▄▄▄▄▄█▄▄█ █▄▄█ █▄▄▄█ █▄▄▄▄▄▄▄█▄█  █▄▄█▄▄▄▄▄▄██▄▄▄▄▄▄▄█▄▄▄▄▄▄█ "
+	@echo -e ${CL_RST} "" ${CL_RST}
+	@echo -e ${CL_BLD}${CL_RED}"=======================================-Package complete-======================================="${CL_RED}
 	@echo -e ${CL_BLD}${CL_YLW}"Zip: "${CL_YLW} $(TARGET_PACKAGE)${CL_RST}
 	@echo -e ${CL_BLD}${CL_YLW}"MD5: "${CL_YLW}" `cat $(TARGET_PACKAGE).md5sum | awk '{print $$1}' `"${CL_RST}
 	@echo -e ${CL_BLD}${CL_YLW}"Size:"${CL_YLW}" `du -sh $(TARGET_PACKAGE) | awk '{print $$1}' `"${CL_RST}
-	@echo -e ${CL_BLD}${CL_CYN}"================================================================================"${CL_RST}
+	@echo -e ${CL_BLD}${CL_RED}"================================================================================================"${CL_RST}
 
 ifeq ($(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE),true)
 name := $(TARGET_PRODUCT)
