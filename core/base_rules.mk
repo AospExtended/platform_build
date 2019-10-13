@@ -481,7 +481,7 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
-	@echo "Install: $@"
+	@echo -e ${CL_CYN}"Install: $@"${CL_RST}
 	$(copy-file-to-new-target)
 	$(PRIVATE_POST_INSTALL_CMD)
 endif
