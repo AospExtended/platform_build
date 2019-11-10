@@ -28,6 +28,11 @@ $(call inherit-product-if-exists, frameworks/base/data/sounds/GoogleAudio.mk)
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.apex.updatable=false
 
+# GSI doesn't support apex for now.
+# Properties set in product take precedence over those in vendor.
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.apex.updatable=false
+
 # Additional settings used in all AOSP builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.ringtone=The_big_adventure.ogg \
