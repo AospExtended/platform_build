@@ -499,7 +499,8 @@ else
         info_dict=OPTIONS.target_info_dict,
         source_info_dict=OPTIONS.source_info_dict,
         block_diffs=block_diff_dict.values(),
-        progress_dict=progress_dict)
+        progress_dict=progress_dict,
+        build_without_vendor=(not HasPartition(input_zip, "vendor")))
     dynamic_partitions_diff.WriteScript(
         script, output_zip, write_verify_script=OPTIONS.verify)
   else:
