@@ -1194,7 +1194,7 @@ $(eval include device/aosp/sepolicy/common/sepolicy.mk)
 -include vendor/*/build/core/apicheck.mk
 
 # We modify several neverallows, so let the build proceed
-ifneq ($(TARGET_BUILD_VARIANT),user)
+ifeq ($(TARGET_BUILD_VARIANT),eng)
 SELINUX_IGNORE_NEVERALLOWS := true
 endif
 
