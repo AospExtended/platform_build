@@ -991,6 +991,19 @@ INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION) \
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
 
+# Support arguments related to dtb/dtbo implementation in boot
+ifdef BOARD_BOOTIMG_HEADER_VERSION
+  INTERNAL_BOOTIMAGE_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+endif
+
+ifdef BOARD_RAMDISK_OFFSET
+  INTERNAL_BOOTIMAGE_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+endif
+
+ifdef BOARD_KERNEL_TAGS_OFFSET
+  INTERNAL_BOOTIMAGE_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+endif
+
 INSTALLED_DTIMAGE_TARGET := $(PRODUCT_OUT)/dt.img
 
 ifeq ($(strip $(BOARD_KERNEL_SEPARATED_DT)),true)
@@ -1898,6 +1911,20 @@ endif
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_RECOVERYIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
 endif
+
+# Support arguments related to dtb/dtbo implementation in recovery
+ifdef BOARD_BOOTIMG_HEADER_VERSION
+  INTERNAL_RECOVERYIMAGE_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+endif
+
+ifdef BOARD_RAMDISK_OFFSET
+  INTERNAL_RECOVERYIMAGE_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+endif
+
+ifdef BOARD_KERNEL_TAGS_OFFSET
+  INTERNAL_RECOVERYIMAGE_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+endif
+
 ifeq ($(strip $(BOARD_KERNEL_SEPARATED_DT)),true)
   INTERNAL_RECOVERYIMAGE_ARGS += --dt $(INSTALLED_DTIMAGE_TARGET)
   RECOVERYIMAGE_EXTRA_DEPS    := $(INSTALLED_DTIMAGE_TARGET)
@@ -3952,8 +3979,11 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
 endif
-ifdef BOARD_KERNEL_TAGS_ADDR
-	$(hide) echo "$(BOARD_KERNEL_TAGS_ADDR)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/tagsaddr
+ifdef BOARD_BOOTIMG_HEADER_VERSION
+	$(hide) echo $(BOARD_BOOTIMG_HEADER_VERSION) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/header_version
+endif
+ifdef BOARD_KERNEL_TAGS_OFFSET
+	$(hide) echo "$(BOARD_KERNEL_TAGS_OFFSET)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/tags_offset
 endif
 ifdef BOARD_RAMDISK_OFFSET
 	$(hide) echo "$(BOARD_RAMDISK_OFFSET)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/ramdisk_offset
@@ -3991,8 +4021,11 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/BOOT/pagesize
 endif
-ifdef BOARD_KERNEL_TAGS_ADDR
-	$(hide) echo "$(BOARD_KERNEL_TAGS_ADDR)" > $(zip_root)/BOOT/tagsaddr
+ifdef BOARD_BOOTIMG_HEADER_VERSION
+	$(hide) echo $(BOARD_BOOTIMG_HEADER_VERSION) $(zip_root)/BOOT/header_version
+endif
+ifdef BOARD_KERNEL_TAGS_OFFSET
+	$(hide) echo "$(BOARD_KERNEL_TAGS_OFFSET)" > $(zip_root)/BOOT/tags_offset
 endif
 ifdef BOARD_RAMDISK_OFFSET
 	$(hide) echo "$(BOARD_RAMDISK_OFFSET)" > $(zip_root)/BOOT/ramdisk_offset
