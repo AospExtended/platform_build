@@ -1093,7 +1093,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     sysmount = "/system"
 
   if OPTIONS.backuptool:
-    script.RunBackup("backup", sysmount)
+    script.RunBackup("backup", sysmount, target_info.get('use_dynamic_partitions') == "true")
 
   if target_info.GetBuildProp("ro.extended.display.version") is not None:
     buildid = target_info.GetBuildProp("ro.extended.display.version")
@@ -1158,7 +1158,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
-    script.RunBackup("restore", sysmount)
+    script.RunBackup("restore", sysmount, target_info.get('use_dynamic_partitions') == "true")
 
   script.WriteRawImage("/boot", "boot.img")
 
