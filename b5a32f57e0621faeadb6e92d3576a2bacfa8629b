@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de8ea5d6_b854078d",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000037
+      },
+      "writtenOn": "2020-06-28T03:02:59Z",
+      "side": 1,
+      "message": "fix this in this patch itself http://gerrit.aospextended.com/c/AospExtended/platform_build/+/1470",
+      "revId": "b5a32f57e0621faeadb6e92d3576a2bacfa8629b",
+      "serverId": "d5cc2900-f5de-4894-bcd1-c35edbbdd7bf",
+      "unresolved": true
+    }
+  ]
+}
