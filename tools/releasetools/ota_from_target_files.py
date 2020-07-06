@@ -969,22 +969,21 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("Target: {}".format(target_info.fingerprint))
 
   #Print ASCII
-  script.Print("**************************************************");
-  script.Print("**              .--.                            **");
-  script.Print("**             : .; :                           **");
-  script.Print("**             :    : .--.  .--. .---.          **");
-  script.Print("**             : :: :' .; :`._-.': .; `         **");
-  script.Print("**             :_;:_;`.__.'`.__.': ._.'         **");
-  script.Print("**                               : :            **");
-  script.Print("**                               :_;            **");
-  script.Print("** .--.        .-.               .-.         .-.**");
-  script.Print("**: .--'      .' `.              : :         : :**");
-  script.Print("**: `;  .-.,-.`. .'.--. ,-.,-. .-' : .--.  .-' :**");
-  script.Print("**: :__ `.  .' : :' '_.': ,. :' .; :' '_.'' .; :**");
-  script.Print("**`.__.':_,._; :_;`.__.':_;:_;`.__.'`.__.'`.__.'**");
-  script.Print("**************************************************");
-  script.Print("*                By:-TeamAEX                     *");
-  script.Print("**************************************************");
+  script.Print("                   ___________          __  ");
+  script.Print("         /\       |__________ \        / /  ");
+  script.Print("        /  \                 \ \      / /   ");
+  script.Print("       / /\ \                 \ \    / /    ");
+  script.Print("      / /  \ \      _______    \ \  / /     ");
+  script.Print("     / /    \ \    |_______|    \ \/ /      ");
+  script.Print("    / /      \ \                / /\ \      ");
+  script.Print("   / /        \ \              / /  \ \     ");
+  script.Print("  / /          \ \            / /    \ \    ");
+  script.Print(" / /            \ \__________/ /      \ \   ");
+  script.Print("/_/              \____________/        \_\  ");
+  script.Print(" __________________________________________ ");
+  script.Print("|                                          |");
+  script.Print("|                 By:-TeamAEX              |");
+  script.Print("|__________________________________________|");
   script.Print(" ")
   script.AppendExtra("sleep (2);")
 
@@ -1014,10 +1013,10 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     androidver = target_info.GetBuildProp("ro.build.version.release")
     manufacturer = target_info.GetBuildProp("ro.product.manufacturer")
     sdkver = target_info.GetBuildProp("ro.build.version.sdk")
-    script.Print(" **************** Software *****************");
+    script.Print(" ---------------- Software -----------------");
     script.Print(" OS version: %s"%(buildid));
     script.Print("");
-    script.Print(" Android version: %s"%(androidver));
+    script.Print(" Android version: %s" %(androidver));
     script.Print("");
     script.Print(" Security patch: %s"%(securep));
     script.Print("");
@@ -1026,12 +1025,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print(" Build ID: %s"%(buildidn));
     script.Print("");
     script.Print(" Build date: %s"%(buildday));
-    script.Print(" **************** Hardware *****************");
+    script.Print(" ---------------- Hardware -----------------");
     script.Print(" Device codename: %s"%(device));
     script.Print("");
     script.Print(" Manufacturer: %s"%(manufacturer));
     script.Print("");
-    script.Print(" *******************************************");
+    script.Print(" -------------------------------------------");
 
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
