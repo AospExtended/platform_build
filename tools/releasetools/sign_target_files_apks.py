@@ -56,7 +56,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
       where $devkey is the directory part of the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt.  (Defaulting to "build/target/product/security"
+      META/misc_info.txt.  (Defaulting to "build/make/target/product/security"
       if the value is not present in misc_info.
 
       -d and -k options are added to the set of mappings in the order
@@ -111,6 +111,7 @@ import base64
 import copy
 import errno
 import gzip
+import io
 import itertools
 import logging
 import os
@@ -154,11 +155,11 @@ OPTIONS.avb_extra_args = {}
 
 def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
-  for apk, cert in certmap.iteritems():
+  for apk, cert in certmap.items():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
 
   # apply all the -e options, overriding anything in the file
-  for apk, cert in OPTIONS.extra_apks.iteritems():
+  for apk, cert in OPTIONS.extra_apks.items():
     if not cert:
       cert = "PRESIGNED"
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -489,13 +490,17 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
       else:
-        new_data = RewriteProps(data)
+        new_data = RewriteProps(data.decode())
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     # Replace the certs in *mac_permissions.xml (there could be multiple, such
     # as {system,vendor}/etc/selinux/{plat,nonplat}_mac_permissions.xml).
     elif filename.endswith("mac_permissions.xml"):
       print("Rewriting %s with new keys." % (filename,))
+      new_data = ReplaceCerts(data.decode())
+      common.ZipWriteStr(output_tf_zip, out_info, new_data)
+    elif info.filename.startswith("SYSTEM/etc/permissions/"):
+      print("rewriting %s with new keys." % info.filename)
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
@@ -600,17 +605,17 @@ def ReplaceCerts(data):
   Raises:
     AssertionError: On finding duplicate entries.
   """
-  for old, new in OPTIONS.key_map.iteritems():
+  for old, new in OPTIONS.key_map.items():
     if OPTIONS.verbose:
       print("    Replacing %s.x509.pem with %s.x509.pem" % (old, new))
 
     try:
       with open(old + ".x509.pem") as old_fp:
         old_cert16 = base64.b16encode(
-            common.ParseCertificate(old_fp.read())).lower()
+            common.ParseCertificate(old_fp.read())).decode().lower()
       with open(new + ".x509.pem") as new_fp:
         new_cert16 = base64.b16encode(
-            common.ParseCertificate(new_fp.read())).lower()
+            common.ParseCertificate(new_fp.read())).decode().lower()
     except IOError as e:
       if OPTIONS.verbose or e.errno != errno.ENOENT:
         print("    Error accessing %s: %s.\nSkip replacing %s.x509.pem with "
@@ -711,12 +716,7 @@ def WriteOtacerts(output_zip, filename, keys):
     filename: The archive name in the output zip.
     keys: A list of public keys to use during OTA package verification.
   """
-
-  try:
-    from StringIO import StringIO
-  except ImportError:
-    from io import StringIO
-  temp_file = StringIO()
+  temp_file = io.BytesIO()
   certs_zip = zipfile.ZipFile(temp_file, "w")
   for k in keys:
     common.ZipWrite(certs_zip, k)
@@ -753,7 +753,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("for OTA package verification")
   else:
     devkey = misc_info.get("default_system_dev_certificate",
-                           "build/target/product/security/testkey")
+                           "build/make/target/product/security/testkey")
     mapped_devkey = OPTIONS.key_map.get(devkey, devkey)
     if mapped_devkey != devkey:
       misc_info["default_system_dev_certificate"] = mapped_devkey
@@ -828,7 +828,7 @@ def ReplaceVerityKeyId(input_zip, output_zip, key_path):
         writable.
     key_path: The path to the PEM encoded X.509 certificate.
   """
-  in_cmdline = input_zip.read("BOOT/cmdline")
+  in_cmdline = input_zip.read("BOOT/cmdline").decode()
   # Copy in_cmdline to output_zip if veritykeyid is not present.
   if "veritykeyid" not in in_cmdline:
     common.ZipWriteStr(output_zip, "BOOT/cmdline", in_cmdline)
@@ -861,7 +861,7 @@ def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
   current in-memory dict contains additional items computed at runtime.
   """
   misc_info_old = common.LoadDictionaryFromLines(
-      input_zip.read('META/misc_info.txt').split('\n'))
+      input_zip.read('META/misc_info.txt').decode().split('\n'))
   items = []
   for key in sorted(misc_info):
     if key in misc_info_old:
@@ -912,7 +912,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
     if s is None:   # -d option
       devkey = misc_info.get("default_system_dev_certificate",
-                             "build/target/product/security/testkey")
+                             "build/make/target/product/security/testkey")
       devkeydir = os.path.dirname(devkey)
 
       OPTIONS.key_map.update({
@@ -927,7 +927,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
 
 
 def GetApiLevelAndCodename(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codename = None
   for line in data.split("\n"):
@@ -949,7 +949,7 @@ def GetApiLevelAndCodename(input_tf_zip):
 
 
 def GetCodenameToApiLevelMap(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codenames = None
   for line in data.split("\n"):
@@ -967,11 +967,15 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   if codenames is None:
     raise ValueError("No ro.build.version.all_codenames in SYSTEM/build.prop")
 
-  result = dict()
+  result = {}
   for codename in codenames:
     codename = codename.strip()
     if codename:
       result[codename] = api_level
+
+  # Work around APKs that still target 'Q' instead of API 29 (b/132882632).
+  result['Q'] = 29
+
   return result
 
 
@@ -991,7 +995,7 @@ def ReadApexKeysInfo(tf_zip):
         key.
   """
   keys = {}
-  for line in tf_zip.read("META/apexkeys.txt").split("\n"):
+  for line in tf_zip.read('META/apexkeys.txt').decode().split('\n'):
     line = line.strip()
     if not line:
       continue

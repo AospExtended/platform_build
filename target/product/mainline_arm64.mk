@@ -31,19 +31,16 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
 
 # Modules that are to be moved to /product
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-  system/app/Browser2/Browser2.apk \
   system/app/Calendar/Calendar.apk \
   system/app/Camera2/Camera2.apk \
   system/app/DeskClock/DeskClock.apk \
   system/app/DeskClock/oat/arm64/DeskClock.odex \
   system/app/DeskClock/oat/arm64/DeskClock.vdex \
-  system/app/Email/Email.apk \
   system/app/Gallery2/Gallery2.apk \
   system/app/LatinIME/LatinIME.apk \
   system/app/LatinIME/oat/arm64/LatinIME.odex \
   system/app/LatinIME/oat/arm64/LatinIME.vdex \
   system/app/Music/Music.apk \
-  system/app/QuickSearchBox/QuickSearchBox.apk \
   system/app/webview/webview.apk \
   system/bin/healthd \
   system/etc/init/healthd.rc \

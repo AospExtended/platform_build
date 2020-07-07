@@ -123,8 +123,6 @@ PRODUCT_PACKAGES += \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
-    libcamera_client \
-    libcameraservice \
     libc_malloc_debug \
     libc_malloc_hooks \
     libcutils \
@@ -381,6 +379,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
 PRODUCT_PACKAGES_DEBUG_ASAN := \
     fuzz \
     honggfuzz
+
+PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
+    libdumpcoverage
 
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)

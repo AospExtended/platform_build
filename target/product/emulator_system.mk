@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# This file lists emulator experimental modules added to PRODUCT_PACKAGES,
+# only included by targets sdk_phone_x86/64 and sdk_gphone_x86/64
 
-# Inherit this when the target needs to support updating APEXes
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
+    system/lib/libemulator_multidisplay_jni.so \
+    system/lib64/libemulator_multidisplay_jni.so \
+    system/priv-app/MultiDisplayProvider/MultiDisplayProvider.apk \
 
-ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
-  PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
-  PRODUCT_PACKAGES := com.android.apex.cts.shim.v1_prebuilt
-  TARGET_FLATTEN_APEX := false
-endif
+PRODUCT_PACKAGES += MultiDisplayProvider

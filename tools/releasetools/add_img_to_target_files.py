@@ -125,7 +125,7 @@ def GetCareMap(which, imgname):
   if image_size:
     # excludes the verity metadata blocks of the given image. When AVB is enabled,
     # this size is the max image size returned by the AVB tool
-    image_blocks = int(image_size) / 4096 - 1
+    image_blocks = int(image_size) // 4096 - 1
     assert image_blocks > 0, "blocks for {} must be positive".format(which)
     care_map_ranges = care_map_ranges.intersect(
         rangelib.RangeSet("0-{}".format(image_blocks)))
@@ -143,16 +143,16 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
     return img.name
 
   def output_sink(fn, data):
-    ofile = open(os.path.join(OPTIONS.input_tmp, "SYSTEM", fn), "w")
-    ofile.write(data)
-    ofile.close()
+    output_file = os.path.join(OPTIONS.input_tmp, "SYSTEM", fn)
+    with open(output_file, "wb") as ofile:
+      ofile.write(data)
 
     if output_zip:
       arc_name = "SYSTEM/" + fn
       if arc_name in output_zip.namelist():
         OPTIONS.replace_updated_files_list.append(arc_name)
       else:
-        common.ZipWrite(output_zip, ofile.name, arc_name)
+        common.ZipWrite(output_zip, output_file, arc_name)
 
   if (OPTIONS.rebuild_recovery and recovery_img is not None and
       boot_img is not None):
@@ -279,7 +279,7 @@ def AddDtbo(output_zip):
 
 
 def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
-  logger.info("creating " + what + ".img...")
+  logger.info("creating %s.img...", what)
 
   image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
   fstab = info_dict["fstab"]
@@ -473,6 +473,23 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   img.Write()
   return img.name
 
+def AddDisabledVBMeta(output_zip):
+  """Creates a disabled VBMeta image and store it in output_zip.
+
+  Args:
+    output_zip: The output zip file, which needs to be already open.
+  """
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vbmeta.img")
+  if os.path.exists(img.input_name):
+    print("vbmeta.img already exists; not rebuilding...")
+    return img.input_name
+  avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
+  cmd = [avbtool, "make_vbmeta_image", "--flag", "2", "--padding_size", "4096", "--output", img.name]
+
+  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  p.communicate()
+  assert p.returncode == 0, "avbtool make_vbmeta_image failed"
+  img.Write()
 
 def AddPartitionTable(output_zip):
   """Create a partition table image and store it in output_zip."""
@@ -762,7 +779,7 @@ def AddImagesToTargetFiles(filename):
   partitions = dict()
 
   def banner(s):
-    logger.info("\n\n++++ " + s + " ++++\n\n")
+    logger.info("\n\n++++ %s  ++++\n\n", s)
 
   banner("boot")
   # common.GetBootableImage() returns the image directly if present.
@@ -870,20 +887,25 @@ def AddImagesToTargetFiles(filename):
     banner("vbmeta")
     AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 
-  if OPTIONS.info_dict.get("build_super_partition") == "true":
+  if OPTIONS.info_dict.get("use_dynamic_partitions") == "true":
     banner("super_empty")
     AddSuperEmpty(output_zip)
 
+  if OPTIONS.info_dict.get("build_super_partition") == "true":
     if OPTIONS.info_dict.get(
         "build_retrofit_dynamic_partitions_ota_package") == "true":
       banner("super split images")
       AddSuperSplit(output_zip)
 
+  if OPTIONS.info_dict.get("avb_disabled_vbmeta") == "true":
+    banner("vbmeta")
+    AddDisabledVBMeta(output_zip)
+
   banner("radio")
   ab_partitions_txt = os.path.join(OPTIONS.input_tmp, "META",
                                    "ab_partitions.txt")
   if os.path.exists(ab_partitions_txt):
-    with open(ab_partitions_txt, 'r') as f:
+    with open(ab_partitions_txt) as f:
       ab_partitions = f.readlines()
 
     # For devices using A/B update, make sure we have all the needed images
@@ -898,7 +920,7 @@ def AddImagesToTargetFiles(filename):
   pack_radioimages_txt = os.path.join(
       OPTIONS.input_tmp, "META", "pack_radioimages.txt")
   if os.path.exists(pack_radioimages_txt):
-    with open(pack_radioimages_txt, 'r') as f:
+    with open(pack_radioimages_txt) as f:
       AddPackRadioImages(output_zip, f.readlines())
 
   if output_zip:

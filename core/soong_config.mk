@@ -34,6 +34,7 @@ $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
 $(call add_json_csv,  Platform_version_future_codenames, $(PLATFORM_VERSION_FUTURE_CODENAMES))
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
+$(call add_json_str,  Platform_security_patch_custom,    $(PLATFORM_SECURITY_PATCH_CUSTOM))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
 
@@ -174,6 +175,8 @@ $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
     $(call add_json_str,$(key),$(SOONG_CONFIG_$(namespace)_$(key))))\
   $(call end_json_map))
 $(call end_json_map)
+
+include vendor/aosp/build/soong/soong_config.mk
 
 $(call json_end)
 

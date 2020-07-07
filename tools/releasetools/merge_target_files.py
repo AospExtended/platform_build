@@ -64,6 +64,7 @@ import common
 import add_img_to_target_files
 
 logger = logging.getLogger(__name__)
+
 OPTIONS = common.OPTIONS
 OPTIONS.verbose = True
 OPTIONS.system_target_files = None
@@ -174,7 +175,6 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
 
   with zipfile.ZipFile(
       target_files,
-      'r',
       allowZip64=True) as target_files_zipfile:
     target_files_namelist = target_files_zipfile.namelist()
 
@@ -395,6 +395,10 @@ def process_misc_info_txt(
       merged_info_dict[key] = '%s %s' % (
         system_info_dict.get(key, ''),
         merged_info_dict.get(key, ''))
+    # Ensure that add_img_to_target_files rebuilds super split images for
+    # devices that retrofit dynamic partitions. This flag may have been set to
+    # false in the partial builds to prevent duplicate building of super.img.
+    merged_dict['build_super_partition'] = 'true'
 
   output_misc_info_txt = os.path.join(
       output_target_files_temp_dir,
@@ -680,7 +684,7 @@ def merge_target_files(
   # TODO(bpeckham): sort this to be more like build.
   other_content = common.RunAndCheckOutput(command, verbose=False)
 
-  with open(output_target_files_list, 'wb') as f:
+  with open(output_target_files_list, 'w') as f:
     f.write(meta_content)
     f.write(other_content)
 
@@ -769,6 +773,7 @@ def main():
       ],
       extra_option_handler=option_handler)
 
+  # pylint: disable=too-many-boolean-expressions
   if (len(args) != 0 or
       OPTIONS.system_target_files is None or
       OPTIONS.other_target_files is None or

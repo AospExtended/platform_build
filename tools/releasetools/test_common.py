@@ -41,7 +41,7 @@ def get_2gb_string():
   # Generate a long string with holes, e.g. 'xyz\x00abc\x00...'.
   for _ in range(0, size, step_size):
     yield os.urandom(block_size)
-    yield '\0' * (step_size - block_size)
+    yield b'\0' * (step_size - block_size)
 
 
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
@@ -72,7 +72,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     # Verify the zip contents.
     entry = zip_file.open(arcname)
     sha1_hash = sha1()
-    for chunk in iter(lambda: entry.read(4 * MiB), ''):
+    for chunk in iter(lambda: entry.read(4 * MiB), b''):
       sha1_hash.update(chunk)
     self.assertEqual(expected_hash, sha1_hash.hexdigest())
     self.assertIsNone(zip_file.testzip())
@@ -97,8 +97,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       sha1_hash = sha1()
       for data in contents:
-        sha1_hash.update(data)
-        test_file.write(data)
+        sha1_hash.update(bytes(data))
+        test_file.write(bytes(data))
       test_file.close()
 
       expected_stat = os.stat(test_file_name)
@@ -136,8 +136,11 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", 0o644)
       else:
         arcname = zinfo_or_arcname.filename
-        expected_mode = extra_args.get("perms",
-                                       zinfo_or_arcname.external_attr >> 16)
+        if zinfo_or_arcname.external_attr:
+          zinfo_perms = zinfo_or_arcname.external_attr >> 16
+        else:
+          zinfo_perms = 0o600
+        expected_mode = extra_args.get("perms", zinfo_perms)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
       common.ZipClose(zip_file)
@@ -262,6 +265,10 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         "perms": 0o600,
         "compress_type": zipfile.ZIP_STORED,
     })
+    self._test_ZipWriteStr(zinfo, random_string, {
+        "perms": 0o000,
+        "compress_type": zipfile.ZIP_STORED,
+    })
 
   def test_ZipWriteStr_large_file(self):
     # zipfile.writestr() doesn't work when the str size is over 2GiB even with
@@ -274,9 +281,9 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, "foo", "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
@@ -451,14 +458,14 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
       'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
       ' private_key="certs/devkey.pk8"\n'
       'name="Settings.apk"'
-      ' certificate="build/target/product/security/platform.x509.pem"'
-      ' private_key="build/target/product/security/platform.pk8"\n'
+      ' certificate="build/make/target/product/security/platform.x509.pem"'
+      ' private_key="build/make/target/product/security/platform.pk8"\n'
       'name="TV.apk" certificate="PRESIGNED" private_key=""\n'
   )
 
   APKCERTS_CERTMAP1 = {
       'RecoveryLocalizer.apk' : 'certs/devkey',
-      'Settings.apk' : 'build/target/product/security/platform',
+      'Settings.apk' : 'build/make/target/product/security/platform',
       'TV.apk' : 'PRESIGNED',
   }
 
@@ -568,7 +575,7 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractPublicKey(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(pubkey, 'rb') as pubkey_fp:
+    with open(pubkey) as pubkey_fp:
       self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
 
   def test_ExtractPublicKey_invalidInput(self):
@@ -578,15 +585,16 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractAvbPublicKey(self):
     privkey = os.path.join(self.testdata_dir, 'testkey.key')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(common.ExtractAvbPublicKey(privkey)) as privkey_fp, \
-        open(common.ExtractAvbPublicKey(pubkey)) as pubkey_fp:
+    with open(common.ExtractAvbPublicKey(privkey), 'rb') as privkey_fp, \
+        open(common.ExtractAvbPublicKey(pubkey), 'rb') as pubkey_fp:
       self.assertEqual(privkey_fp.read(), pubkey_fp.read())
 
   def test_ParseCertificate(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
 
     cmd = ['openssl', 'x509', '-in', cert, '-outform', 'DER']
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                      universal_newlines=False)
     expected, _ = proc.communicate()
     self.assertEqual(0, proc.returncode)
 
@@ -886,7 +894,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       info_values = ''.join(
-          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.iteritems())])
+          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.items())])
       common.ZipWriteStr(target_files_zip, 'META/misc_info.txt', info_values)
 
       FSTAB_TEMPLATE = "/dev/block/system {} ext4 ro,barrier=1 defaults"
@@ -1053,7 +1061,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     loc = os.path.join(self._tempdir, prefix, name)
     if not os.path.exists(os.path.dirname(loc)):
       os.makedirs(os.path.dirname(loc))
-    with open(loc, "w+") as f:
+    with open(loc, "wb") as f:
       f.write(data)
 
   def test_full_recovery(self):
@@ -1077,7 +1085,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
     # Validate 'recovery-from-boot' with bonus argument.
-    self._out_tmp_sink("etc/recovery-resource.dat", "bonus", "SYSTEM")
+    self._out_tmp_sink("etc/recovery-resource.dat", b"bonus", "SYSTEM")
     common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
@@ -1085,25 +1093,30 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
 
 
 class MockScriptWriter(object):
-  """A class that mocks edify_generator.EdifyGenerator.
-  """
+  """A class that mocks edify_generator.EdifyGenerator."""
+
   def __init__(self, enable_comments=False):
     self.lines = []
     self.enable_comments = enable_comments
+
   def Comment(self, comment):
     if self.enable_comments:
-      self.lines.append("# {}".format(comment))
+      self.lines.append('# {}'.format(comment))
+
   def AppendExtra(self, extra):
     self.lines.append(extra)
+
   def __str__(self):
-    return "\n".join(self.lines)
+    return '\n'.join(self.lines)
 
 
 class MockBlockDifference(object):
+
   def __init__(self, partition, tgt, src=None):
     self.partition = partition
     self.tgt = tgt
     self.src = src
+
   def WriteScript(self, script, _, progress=None,
                   write_verify_script=False):
     if progress:
@@ -1111,11 +1124,13 @@ class MockBlockDifference(object):
     script.AppendExtra("patch({});".format(self.partition))
     if write_verify_script:
       self.WritePostInstallVerifyScript(script)
+
   def WritePostInstallVerifyScript(self, script):
     script.AppendExtra("verify({});".format(self.partition))
 
 
 class FakeSparseImage(object):
+
   def __init__(self, size):
     self.blocksize = 4096
     self.total_blocks = size // 4096
@@ -1123,12 +1138,13 @@ class FakeSparseImage(object):
 
 
 class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
+
   @staticmethod
   def get_op_list(output_path):
-    with zipfile.ZipFile(output_path, 'r') as output_zip:
-      with output_zip.open("dynamic_partitions_op_list") as op_list:
-        return [line.strip() for line in op_list.readlines()
-                if not line.startswith("#")]
+    with zipfile.ZipFile(output_path) as output_zip:
+      with output_zip.open('dynamic_partitions_op_list') as op_list:
+        return [line.decode().strip() for line in op_list.readlines()
+                if not line.startswith(b'#')]
 
   def setUp(self):
     self.script = MockScriptWriter()

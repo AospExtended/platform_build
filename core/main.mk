@@ -177,6 +177,10 @@ else
   endif
 endif
 
+#
+# -----------------------------------------------------------------
+# Add AospExtended generic properties to the build properties.
+ADDITIONAL_BUILD_PROPERTIES += $(PRODUCT_GENERIC_PROPERTIES)
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
@@ -345,6 +349,15 @@ ifneq (,$(filter debug,$(tags_to_install)))
 endif
 endif
 
+## java coverage ##
+# Install additional tools on java coverage builds
+ifeq (true,$(EMMA_INSTRUMENT))
+ifneq (,$(filter debug,$(tags_to_install)))
+  tags_to_install += java_coverage
+endif
+endif
+
+
 ## sdk ##
 
 ifdef is_sdk_build
@@ -431,43 +444,6 @@ endef
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
-ifneq ($(ONE_SHOT_MAKEFILE),)
-# We've probably been invoked by the "mm" shell function
-# with a subdirectory's makefile.
-include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
-# Change CUSTOM_MODULES to include only modules that were
-# defined by this makefile; this will install all of those
-# modules as a side-effect.  Do this after including ONE_SHOT_MAKEFILE
-# so that the modules will be installed in the same place they
-# would have been with a normal make.
-CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-
-# A helper goal printing out install paths
-define register_module_install_path
-.PHONY: GET-MODULE-INSTALL-PATH-$(1)
-GET-MODULE-INSTALL-PATH-$(1):
-	echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
-endef
-
-SORTED_ALL_MODULES := $(sort $(ALL_MODULES))
-UNIQUE_ALL_MODULES :=
-$(foreach m,$(SORTED_ALL_MODULES),\
-    $(if $(call streq,$(m),$(lastword $(UNIQUE_ALL_MODULES))),,\
-        $(eval UNIQUE_ALL_MODULES += $(m))))
-SORTED_ALL_MODULES :=
-
-$(foreach mod,$(UNIQUE_ALL_MODULES),$(if $(ALL_MODULES.$(mod).INSTALLED),\
-    $(eval $(call register_module_install_path,$(mod)))\
-    $(foreach path,$(ALL_MODULES.$(mod).PATH),\
-        $(eval my_path_prefix := GET-INSTALL-PATH-IN)\
-        $(foreach component,$(subst /,$(space),$(path)),\
-            $(eval my_path_prefix := $$(my_path_prefix)-$$(component))\
-            $(eval .PHONY: $$(my_path_prefix))\
-            $(eval $$(my_path_prefix): GET-MODULE-INSTALL-PATH-$(mod))))))
-UNIQUE_ALL_MODULES :=
-
-else # ONE_SHOT_MAKEFILE
-
 ifneq ($(dont_bother),true)
 FULL_BUILD := true
 #
@@ -488,8 +464,6 @@ endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
 droid_targets : blueprint_tools
 
 endif # dont_bother
-
-endif # ONE_SHOT_MAKEFILE
 
 ifndef subdir_makefiles_total
 subdir_makefiles_total := $(words init post finish)
@@ -1139,6 +1113,7 @@ define product-installed-files
     $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
     $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1555,21 +1530,12 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
-.PHONY: systemtarball
-systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
-
-.PHONY: boottarball
-boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
-
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
 ifneq (,$(filter userdataimage, $(MAKECMDGOALS)))
 $(call dist-for-goals, userdataimage, $(BUILT_USERDATAIMAGE_TARGET))
 endif
-
-.PHONY: userdatatarball
-userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
 .PHONY: cacheimage
 cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
@@ -1747,7 +1713,6 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
-      $(PACKAGE_STATS_FILE) \
     )
   endif
   endif

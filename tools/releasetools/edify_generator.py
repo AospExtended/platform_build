@@ -137,19 +137,30 @@ class EdifyGenerator(object):
 
   def AssertDevice(self, device):
     """Assert that the device identifier is the given string."""
-    cmd = ('getprop("ro.product.device") == "%s" || '
-           'abort("E%d: This package is for \\"%s\\" devices; '
-           'this is a \\"" + getprop("ro.product.device") + "\\".");') % (
-               device, common.ErrorCode.DEVICE_MISMATCH, device)
-    self.script.append(cmd)
+    cmd = ('assert(' +
+           ' || \0'.join(['getprop("ro.product.device") == "%s" || getprop("ro.build.product") == "%s"'
+                         % (i, i) for i in device.split(",")]) +
+           ' || abort("E%d: This package is for device: %s; ' +
+           'this device is " + getprop("ro.product.device") + ".");' +
+           ');') % (common.ErrorCode.DEVICE_MISMATCH, device)
+    self.script.append(self.WordWrap(cmd))
 
   def AssertSomeBootloader(self, *bootloaders):
-    """Asert that the bootloader version is one of *bootloaders."""
+    """Assert that the bootloader version is one of *bootloaders."""
     cmd = ("assert(" +
            " ||\0".join(['getprop("ro.bootloader") == "%s"' % (b,)
                          for b in bootloaders]) +
+           ' || abort("This package supports bootloader(s): ' +
+           ", ".join(["%s" % (b,) for b in bootloaders]) +
+           '; this device has bootloader " + getprop("ro.bootloader") + ".");' +
            ");")
     self.script.append(self.WordWrap(cmd))
+
+  def RunBackup(self, command, mount_point):
+    if self.fstab:
+      p = self.fstab[mount_point]
+    self.script.append(('run_program("/tmp/install/bin/backuptool.sh", "%s", "%s", "%s");' % (
+        command, p.device, p.fs_type)))
 
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
@@ -222,6 +233,17 @@ class EdifyGenerator(object):
           p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device,
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
+
+  def Unmount(self, mount_point):
+    """Unmount the partition with the given mount_point."""
+    if mount_point in self.mounts:
+      self.mounts.remove(mount_point)
+      self.script.append('unmount("%s");' % (mount_point,))
+
+  def UnpackPackageDir(self, src, dst):
+    """Unpack a given directory from the OTA package into the given
+    destination directory."""
+    self.script.append('package_extract_dir("%s", "%s");' % (src, dst))
 
   def Comment(self, comment):
     """Write a comment into the update script."""
@@ -303,6 +325,25 @@ class EdifyGenerator(object):
         '    abort("E{code}: Failed to apply patch to {source}");').format(
             target=target, source=source, patch=patch,
             code=common.ErrorCode.APPLY_PATCH_FAILURE)))
+
+  def SetPermissionsRecursive(self, fn, uid, gid, dmode, fmode, selabel,
+                              capabilities):
+    """Recursively set path ownership and permissions."""
+    if not self.info.get("use_set_metadata", False):
+      self.script.append('set_perm_recursive(%d, %d, 0%o, 0%o, "%s");'
+                         % (uid, gid, dmode, fmode, fn))
+    else:
+      if capabilities is None:
+        capabilities = "0x0"
+      cmd = 'set_metadata_recursive("%s", "uid", %d, "gid", %d, ' \
+          '"dmode", 0%o, "fmode", 0%o' \
+          % (fn, uid, gid, dmode, fmode)
+      if not fn.startswith("/tmp"):
+        cmd += ', "capabilities", "%s"' % capabilities
+      if selabel is not None:
+        cmd += ', "selabel", "%s"' % selabel
+      cmd += ');'
+      self.script.append(cmd)
 
   def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given

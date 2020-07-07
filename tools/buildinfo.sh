@@ -13,6 +13,7 @@ echo "ro.build.version.codename=$PLATFORM_VERSION_CODENAME"
 echo "ro.build.version.all_codenames=$PLATFORM_VERSION_ALL_CODENAMES"
 echo "ro.build.version.release=$PLATFORM_VERSION"
 echo "ro.build.version.security_patch=$PLATFORM_SECURITY_PATCH"
+echo "ro.extended.version.security_patch=$PLATFORM_SECURITY_PATCH_CUSTOM"
 echo "ro.build.version.base_os=$PLATFORM_BASE_OS"
 echo "ro.build.version.min_supported_target_sdk=$PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION"
 echo "ro.build.date=`$DATE`"
@@ -51,8 +52,11 @@ echo "ro.build.product=$TARGET_DEVICE"
 
 echo "# Do not try to parse description or thumbprint"
 echo "ro.build.description=$PRIVATE_BUILD_DESC"
+echo "ro.build.fingerprint=$BUILD_FINGERPRINT"
 if [ -n "$BUILD_THUMBPRINT" ] ; then
   echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
 fi
+
+echo "ro.aex.device=$AOSP_DEVICE"
 
 echo "# end build properties"

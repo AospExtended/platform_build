@@ -107,6 +107,7 @@ $(call get-product-makefiles,$(_find-android-products-files))
 endef
 
 _product_var_list :=
+_product_var_list += PRODUCT_BUILD_PROP_OVERRIDES
 _product_var_list += PRODUCT_NAME
 _product_var_list += PRODUCT_MODEL
 
@@ -119,6 +120,8 @@ _product_var_list += PRODUCT_HOST_PACKAGES
 _product_var_list += PRODUCT_PACKAGES
 _product_var_list += PRODUCT_PACKAGES_DEBUG
 _product_var_list += PRODUCT_PACKAGES_DEBUG_ASAN
+# Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
+_product_var_list += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_var_list += PRODUCT_PACKAGES_ENG
 _product_var_list += PRODUCT_PACKAGES_TESTS
 
@@ -490,9 +493,11 @@ _readonly_late_variables := \
 
 # Modified internally in the build system
 _readonly_late_variables += \
+  PRODUCT_CFI_INCLUDE_PATHS \
   PRODUCT_COPY_FILES \
   PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
   PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+  PRODUCT_SOONG_NAMESPACES
 
 _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
 

@@ -226,9 +226,9 @@ TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
-ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
-$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-endif
+#ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
+#$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+#endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
@@ -508,8 +508,16 @@ endif
 # APEXes are by default flattened, i.e. non-updatable.
 # It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
-ifeq (,$(TARGET_FLATTEN_APEX))
-TARGET_FLATTEN_APEX := true
+#
+# APEX flattening can also be forcibly enabled (resp. disabled) by
+# setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
+# setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
+ifdef OVERRIDE_TARGET_FLATTEN_APEX
+  TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
+else
+  ifeq (,$(TARGET_FLATTEN_APEX))
+    TARGET_FLATTEN_APEX := true
+  endif
 endif
 
 ifeq (,$(TARGET_BUILD_APPS))

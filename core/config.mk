@@ -95,7 +95,7 @@ $(KATI_obsolete_var TARGET_ANDROID_FILESYSTEM_CONFIG_H,Use TARGET_FS_CONFIG_GEN 
 $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
-$(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+#$(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -105,7 +105,7 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
 UNAME := $(shell uname -sm)
 
-SRC_TARGET_DIR := $(TOPDIR)build/target
+SRC_TARGET_DIR := $(TOPDIR)build/make/target
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
@@ -114,6 +114,9 @@ SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
 ifdef TARGET_DEVICE_DIR
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
+
+ONE_SHOT_MAKEFILE :=
+.KATI_READONLY := ONE_SHOT_MAKEFILE
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
@@ -229,6 +232,16 @@ include $(BUILD_SYSTEM)/envsetup.mk
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
 FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
+
+# General entries for project pathmap.  Any entries listed here should
+# be device and hardware independent.
+$(call project-set-path-variant,ril,TARGET_RIL_VARIANT,hardware/ril)
+
+-include vendor/extra/BoardConfigExtra.mk
+
+ifneq ($(CUSTOM_BUILD),)
+include vendor/aosp/config/BoardConfigAosp.mk
+endif
 
 # The build system exposes several variables for where to find the kernel
 # headers:
@@ -443,9 +456,6 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
-ifneq ($(ONE_SHOT_MAKEFILE),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_APPS_USE_PREBUILT_SDK :=
@@ -579,7 +589,6 @@ MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
 IMG2SIMG := $(HOST_OUT_EXECUTABLES)/img2simg$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
-MKTARBALL := build/make/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
@@ -762,7 +771,7 @@ endif
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   DEFAULT_SYSTEM_DEV_CERTIFICATE := $(PRODUCT_DEFAULT_DEV_CERTIFICATE)
 else
-  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/make/target/product/security/testkey
 endif
 .KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
 
@@ -887,16 +896,12 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
-    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
-)
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
-$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
     $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
+    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
+    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
-endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
 valid_super_partition_list := system vendor product product_services odm
@@ -917,10 +922,6 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
     $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
-
-endif # PRODUCT_USE_DYNAMIC_PARTITIONS
-
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
@@ -981,8 +982,11 @@ BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 
 endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 endif # BOARD_SUPER_PARTITION_SIZE
+BOARD_SUPER_PARTITION_BLOCK_DEVICES ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_BLOCK_DEVICES
+BOARD_SUPER_PARTITION_METADATA_DEVICE ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_METADATA_DEVICE
+BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE ?=
 .KATI_READONLY := BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE
 
 $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
@@ -991,7 +995,7 @@ $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
         $(error BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))
 
-endif # PRODUCT_BUILD_SUPER_PARTITION
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
 # ###############################################################
 # Set up final options.
@@ -1152,8 +1156,7 @@ endef
 # in the source tree.
 dont_bother_goals := out \
     snod systemimage-nodeps \
-    stnod systemtarball-nodeps \
-    userdataimage-nodeps userdatatarball-nodeps \
+    userdataimage-nodeps \
     cacheimage-nodeps \
     bptimage-nodeps \
     vnod vendorimage-nodeps \
@@ -1178,5 +1181,23 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
+
+ifneq ($(CUSTOM_BUILD),)
+## We need to be sure the global selinux policies are included
+## last, to avoid accidental resetting by device configs
+$(eval include device/aosp/sepolicy/common/sepolicy.mk)
+
+# Include any vendor specific config.mk file
+-include vendor/*/build/core/config.mk
+
+# Include any vendor specific apicheck.mk file
+-include vendor/*/build/core/apicheck.mk
+
+# Rules for QCOM targets
+-include vendor/*/build/core/qcom_target.mk
+
+# Rules for MTK targets
+-include vendor/*/build/core/mtk_target.mk
+endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk
