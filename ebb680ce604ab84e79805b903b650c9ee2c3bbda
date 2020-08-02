@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5bd5a28f_0753b86c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 1000037
+      },
+      "writtenOn": "2020-08-02T13:56:28Z",
+      "side": 1,
+      "message": "could be fine if the centre part of the \"X\" has done in different way",
+      "revId": "ebb680ce604ab84e79805b903b650c9ee2c3bbda",
+      "serverId": "d5cc2900-f5de-4894-bcd1-c35edbbdd7bf",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2f3b07e6_1721da00",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 1
