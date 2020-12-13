@@ -382,6 +382,19 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
 endif
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := liboemaids_system
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
+LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := liboemaids_vendor
+LOCAL_VENDOR_MODULE := true
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
+LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
+include $(BUILD_SHARED_LIBRARY)
+
 system_android_filesystem_config :=
 system_capability_header :=
 fs_config_generate_extra_partition_list :=
