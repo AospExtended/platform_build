@@ -23,7 +23,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
     keyguard.no_require_sim=true \
 
 ifeq ($(AOSP_BUILD),)
-PRODUCT_PROPERTY_OVERRIDES := \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.android.dataroaming=true
 endif
 
