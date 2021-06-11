@@ -248,6 +248,16 @@ define generate-common-build-props-with-product-vars-set
 	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
 
+# Add AospExtended props
+define add-extended-props
+	AOSP_DEVICE="$(TARGET_DEVICE)" \
+	PLATFORM_VERSION="$(PLATFORM_VERSION)" \
+	DATE="$(DATE_FROM_FILE)" \
+	EXTENDED_VERSION="$(EXTENDED_VERSION)" \
+	EXTENDED_BUILD_TYPE="$(EXTENDED_BUILD_TYPE)" \
+	bash build/make/tools/buildinfo_aex.sh >> $(1)
+endef
+
 ifdef property_overrides_split_enabled
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
 INSTALLED_DEFAULT_PROP_OLD_TARGET := $(TARGET_ROOT_OUT)/default.prop
@@ -409,6 +419,9 @@ system_prop_file := $(TARGET_SYSTEM_PROP)
 else
 system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
+
+$(shell rm -rf $(intermediate_system_build_prop))
+
 $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
@@ -420,6 +433,7 @@ $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTE
 	        PRODUCT_DEVICE="$(PRODUCT_SYSTEM_DEVICE)" \
 	        $(PRODUCT_BUILD_PROP_OVERRIDES) \
 	        $(call generate-common-build-props-with-product-vars-set,system,$@)
+	        $(call add-extended-props,$@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
@@ -2215,7 +2229,7 @@ $(recovery_ramdisk): $(MKBOOTFS) $(COMPRESSION_COMMAND_DEPS) \
 define build-recoveryimage-target
   @echo "Generating Changelog"
   bash vendor/aosp/tools/changelog "$(PRODUCT_OUT)"
-  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(EXTENDED_BUILD_DATE)-Changelog.txt
+  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/AospExtended-$(EXTENDED_VERSION)-$(shell $(DATE_FROM_FILE) +%Y%m%d-%H%M)-Changelog.txt
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
     $(MKBOOTIMG) --kernel $(2) $(INTERNAL_RECOVERYIMAGE_ARGS) \
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
