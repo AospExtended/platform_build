@@ -56,6 +56,6 @@ if [ -n "$BUILD_THUMBPRINT" ] ; then
   echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
 fi
 
-echo "ro.aex.device=$AOSP_DEVICE"
-
 echo "# end build properties"
+
+BUILDINFO_AEX=vendor/aosp/build/tools/buildinfo_aex.sh && test -f $BUILDINFO_AEX && source $BUILDINFO_AEX
