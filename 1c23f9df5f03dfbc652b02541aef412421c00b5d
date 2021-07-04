@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4956003_cee48dd9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2021-07-04T04:32:22Z",
+      "side": 1,
+      "message": "We also have option calling the buildinfo_aex script from vendor/aosp/build/tools. Should we do that way to ease future bringups?",
+      "revId": "1c23f9df5f03dfbc652b02541aef412421c00b5d",
+      "serverId": "692a3d4a-6cfc-41d4-b12b-cb9542eed61e"
+    }
+  ]
+}
