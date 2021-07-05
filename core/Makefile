@@ -255,7 +255,7 @@ define add-extended-props
 	DATE="$(DATE_FROM_FILE)" \
 	EXTENDED_VERSION="$(EXTENDED_VERSION)" \
 	EXTENDED_BUILD_TYPE="$(EXTENDED_BUILD_TYPE)" \
-	bash build/make/tools/buildinfo_aex.sh >> $(1)
+	bash vendor/aosp/build/tools/buildinfo_aex.sh >> $(1)
 endef
 
 ifdef property_overrides_split_enabled
